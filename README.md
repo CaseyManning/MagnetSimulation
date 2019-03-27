@@ -14,5 +14,11 @@ A simulation of a system of spherical magnets
 
 ### Useful keyboard shortcuts
 Space: Start simulation
+
 Alt + P: Run python script
+
 ⌘  + Shift + S: Save python script
+
+
+
+I will work on creating a system to use the python API to apply forces to the magnets during the simulation, so I will update the readme with information on how to apply force / rotation to magnets at that point.
