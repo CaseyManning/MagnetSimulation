@@ -31,8 +31,8 @@ I will work on creating a system to use the python API to apply forces to the ma
 
 ### TODO
 
+- *Current Big Problem:* Blender doesn't actually update while a python script is running, meaning that if we manually go through the frames and change magnet positions, blender will just freeze and you will only see the magnets move after the simulation is over.
+
 - create framework for implementing forces and rotation through python API (Casey will hopefully work on this next week)
 
 - Create a good system to easily turn on and off gravity, and automatically place a certain number of magnets in the simulation
-
-- create framework for representing magnets as a class in python
