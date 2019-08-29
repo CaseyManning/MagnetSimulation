@@ -32,4 +32,7 @@ fig, ax = plt.subplots()
 X,Y = np.meshgrid(xs,zs)
 U,V = Bs[:,:,0], Bs[:,:,2]
 ax.streamplot(X, Y, U, V, color=np.log(U**2+V**2), density=1.5)
-plt.show() 
+plt.show()
+
+#USE THIS: Gets the magnetic field at one point
+print(magnet1.getB([2,2,2]))
