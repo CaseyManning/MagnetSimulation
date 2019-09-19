@@ -7,7 +7,7 @@ mui = 1.05 #permiability of the SM in the medium, (Steirman et al., 2019)
 
 mue = 1.257 * math.pow(10, -6) #permiability of the medium, approximated to the permiability of free space
 
-H0 = np.array([0, 0, 1]) #Uniform external magnetic field
+H0 = np.array([0, 0, 0]) #Uniform external magnetic field
 
 class Magnet:
     

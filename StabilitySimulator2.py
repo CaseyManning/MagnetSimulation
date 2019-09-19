@@ -25,10 +25,11 @@ class MagnetSimulator:
 
         print(energy)
 
+
         
 if __name__ == "__main__":
-    magnet1 = Magnet(np.array([100, 0, 0]), 1/8, np.array([0, 0, 0]))
-    magnet2 = Magnet(np.array([0, 200, 0]), 1/8, np.array([-1, 1, 1]))
+    magnet1 = Magnet(np.array([100, 100, 100]), 0.003175, np.array([0, 0, 0]))
+    magnet2 = Magnet(np.array([-200, 200, 200]), 0.003175, np.array([-1, 1, 1]))
     magnets = [magnet1, magnet2]
     sim = MagnetSimulator(magnets)
     sim.run()
