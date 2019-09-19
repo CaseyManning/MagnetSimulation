@@ -1,7 +1,7 @@
-import magpylib as magpy
 import numpy as np
 import matplotlib.pyplot as plt
 from Magnet import Magnet
+import math
 
 class MagnetSimulator:
 
@@ -9,30 +9,26 @@ class MagnetSimulator:
         self.magnets = magnets
 
     def getPotentialEnergy(self, magnets):
-        return 0
+        totalPotential = 0
+        for mag1 in magnets:
+            for mag2 in magnets:
+                if not mag1 == mag2:
+                    moment1 = mag1.moment
+                    moment2 = mag2.moment
+                    r = np.linalg.norm(mag1.position - mag2.position)
+
+                    totalPotential += np.dot(-1*moment2, 1/(4*np.pi)*((3*np.dot(moment1, r)*r)/math.pow(r, 5) - (moment1/math.pow(r, 3))))
+        return totalPotential
 
     def run(self):
-        self.output = output
-        self.increment = increment
-
         energy = self.getPotentialEnergy(self.magnets)
 
         print(energy)
-        
-
-    def getMagnetData(self):
-        return ""
-
-    def outputFrame(self):
-        if self.output == 'csv':
-            print(self.getMagnetData())
-        elif self.output == 'print':
-            print(self.getMagnetData())
 
         
 if __name__ == "__main__":
-    magnet1 = Magnet((1, 0, 0), 1/8, (0, 0, 0))
-    magnet2 = Magnet((0, 1, 0), 1/8, (1, 1, -1))
+    magnet1 = Magnet(np.array([100, 0, 0]), 1/8, np.array([0, 0, 0]))
+    magnet2 = Magnet(np.array([0, 200, 0]), 1/8, np.array([-1, 1, 1]))
     magnets = [magnet1, magnet2]
     sim = MagnetSimulator(magnets)
     sim.run()
