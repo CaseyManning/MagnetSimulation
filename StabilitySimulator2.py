@@ -11,6 +11,9 @@ class MagnetSimulator:
     def getPotentialEnergy(self, magnets):
         totalPotential = 0
         for mag1 in magnets:
+            print("Moment:" + str(mag1.moment))
+            print("Magnetization:" + str(mag1.magnetization))
+            print('————————————————————————————————————————————————————————————')
             for mag2 in magnets:
                 if not mag1 == mag2:
                     moment1 = mag1.moment
@@ -25,6 +28,7 @@ class MagnetSimulator:
 
         print(energy)
 
+#378.94 * the orientation
 
         
 if __name__ == "__main__":
