@@ -9,6 +9,8 @@ mue = 1.257 * math.pow(10, -6) #permiability of the medium, approximated to the 
 
 H0 = np.array([0, 0, 0]) #Uniform external magnetic field
 
+Br = 1.5 #Residual Flux Density of neodymium (Wikipedia et al., 2019)
+
 class Magnet:
     
     def getMoment(self, magnetization):
@@ -17,8 +19,11 @@ class Magnet:
     def getMagnetization(self, baseMagnetization):
         return ((3 * (mui - mue))/(mui + 2*mue)) * H0 + (3*mu0*baseMagnetization)/(mui + 2*mue) #Equation 4
 
+    def getMomentRemanence(self):
+        return (1/mue) * Br * ((4/3) * np.pi * math.pow(self.radius, 3)) * (self.magnetization / (self.magnetization**2).sum()**0.5)
+
     def __init__(self, baseMagnetization, radius, position):
         self.magnetization = self.getMagnetization(baseMagnetization)
         self.radius = radius
         self.position = position
-        self.moment = self.getMoment(self.magnetization)
+        self.moment = self.getMomentRemanence()#self.getMoment(self.magnetization)

@@ -27,8 +27,8 @@ ax = fig.add_subplot(111, projection='3d')
 # print(zs)
 # ax.scatter(xs, ys, zs)
 
-ax.set_xlabel('X Base Magnetization')
-ax.set_ylabel('Y Base Magnetization')
+ax.set_xlabel('Magnet 2 X Position')
+ax.set_ylabel('Magnet 2 Y Position')
 ax.set_zlabel('System Potential Energy')
 
 xs = []
@@ -40,7 +40,7 @@ for i in range(-10, 10, 1):
     for j in range(-10, 10, 1):
         xs.append(i/2)
         ys.append(j/2)
-        magnet2 = Magnet(np.array([0, 100, 0]), 0.003175, np.array([i/2, j/2, 0]))
+        magnet2 = Magnet(np.array([100, 100, 0]), 0.003175, np.array([i/2, j/2, 0]))
         zs.append(m.getPotentialEnergy([magnet1, magnet2]))
 
 print(zs)
