@@ -4,30 +4,31 @@ import matplotlib.pyplot as plt
 from Magnet import Magnet
 import math
 
+def partialX(mag1, mag2):
+    return 5
+
+def partialY(mag1, mag2):
+    return 5
+
+def partialZ(mag1, mag2):
+    return 5
+
+def partialA(mag1, mag2):
+    return 5
+
+def partialB(mag1, mag2):
+    return 5
+
+def partialC(mag1, mag2):
+    return 5
+
 class MagnetSimulator:
 
-    def partialM0x(self, mag1, mag2):
-        return 5
-    
-    def partialM0y(self, mag1, mag2):
-        return 5
-    
-    def partialM0z(self, mag1, mag2):
-        return 5
-    
-    def partialM1x(self, mag1, mag2):
-        return 5
-
-    def partialM1y(self, mag1, mag2):
-        return 5
-
-    def partialM1z(self, mag1, mag2):
-        return 5
-
-    rotPartials = [partialM0x]
-    posPartials = [partialM0x]
+    rotPartials = [partialX, partialY, partialZ]
+    posPartials = [partialA, partialB, partialC]
 
     threshold = 0.1
+    distThreshold = 0.1
 
     def __init__(self, magnets):
         self.magnets = magnets
@@ -47,12 +48,21 @@ class MagnetSimulator:
 
     def pointsTowardsMagnet(self, partialVector, magnet):
         for magnet2 in magnets:
-            if not magnet == magnet2:
-                vec = magnet1.position - magnet.position
+            if (not magnet == magnet2) and np.linalg.norm(magnet.position - magnet2.position) < self.distThreshold:
+                vec = magnet2.position - magnet.position
                 v_hat = vec / (vec**2).sum()**0.5
                 p_hat = partialVector / (partialVector**2).sum()**0.5
-                if np.linalg.norm(p_hat - v_hat) < threshold:
+                if np.linalg.norm(p_hat - v_hat) < self.threshold:
                     return true
+                for magnet3 in magnets:
+                    if (not (magnet3 == magnet or magnet3 == magnet2)) and np.linalg.norm(magnet.position - magnet3.position) < self.distThreshold:
+                        vec1 = magnet2.position - magnet.position
+                        vec2 = magnet3.position - magnet.position
+                        avgVec = (vec1 + vec2) / 2
+                        avgVec_hat = avgVec / (avgVec**2).sum()**0.5
+                        p_hat = partialVector / (partialVector**2).sum()**0.5
+                        if np.linalg.norm(p_hat - avgVec_hat) < self.threshold:
+                            return true
         return false
 
     def run(self):
@@ -60,14 +70,16 @@ class MagnetSimulator:
 
         for mag1 in magnets:
             partialPos = np.array([0, 0, 0])
+            partialRot = np.array([0, 0, 0])
             for mag2 in magnets:
                 if not mag1 == mag2:
-                    for partial in self.rotPartials:
-                        if not partial(mag1, mag2) == 0:
-                            print('Not stable :\'o(')
                     partialPos += np.array([partial(mag1, mag2) for partial in self.posPartials])
+                    partialRot += np.array([partial(mag1, mag2) for partial in self.rotPartials])
             
             if not self.pointsTowardsMagnet(partialPos, magnet1):
+                print("Unstable magnet")
+
+            if np.linalg.norm(partialRot) < self.threshold:
                 print("Unstable magnet")
 
         
