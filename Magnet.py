@@ -9,11 +9,11 @@ mue = 1.257 * math.pow(10, -6) #permiability of the medium, approximated to the 
 
 H0 = np.array([0, 0, 0]) #Uniform external magnetic field
 
-Br = 1.5 #Residual Flux Density of neodymium (Wikipedia et al., 2019)
+Br = 1.1 # (1.5?) Residual Flux Density of neodymium (Wikipedia et al., 2019)
 
 class Magnet:
     
-    def getMoment(self, magnetization):
+    def getMomentOld(self, magnetization):
         return (4*np.pi / 3) * np.power(self.radius, 3) * magnetization
 
     def getMagnetization(self, baseMagnetization):

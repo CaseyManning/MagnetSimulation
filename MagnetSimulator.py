@@ -69,8 +69,8 @@ time = 10
 increment = 0.1
 
 if __name__ == "__main__":
-    magnet1 = magpy.source.magnet.Sphere(mag=[0,0,600],dim=3,pos=[-4,0,3], angle=0)
-    magnet2 = magpy.source.magnet.Sphere(mag=[0,0,1000],dim=3,pos=[2,-5,1], angle=0)
+    magnet1 = magpy.source.magnet.Sphere(mag=[100,0,0],dim=3,pos=[-4,0,3], angle=0)
+    magnet2 = magpy.source.magnet.Sphere(mag=[100,0,0],dim=3,pos=[2,-5,1], angle=0)
     magnets = [magnet1, magnet2]
     sim = MagnetSimulator(magnets)
     sim.run(time, 'print', increment)
