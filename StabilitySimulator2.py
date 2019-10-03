@@ -14,9 +14,14 @@ def partialY(mag1, mag2):
 def partialZ(mag1, mag2):
     return 5
 
-def partial1X(m1, m0):
-    r = (5,5,5)
-    return -m1.x * (1/(4 * np.pi)) * (3*(-2*m0.x * math.pow(r.x, 3) - 4 * math.pow(r.x, 2) * m0.y * r.y - 4 * math.pow(r.x, 2) * m0.z * r.z + 3*m0.x * r.x + math.pow(r.y, 2) + 3 * m0.x * r.x * math.pow(r.z, 2) + m0.y * math.pow(r.y, 3) + m0.y * r.y * math.pow(r.z, 2) + math.pow(r.z, 2)*m0.z * r.z + m0.z * math.pow(r.z, 3))/math.pow(math.pow(r.x, 2) + math.pow(r.y, 2) + math.pow(r.z, 2), 7.2))
+def partial1X(m0, m1):
+    r = np.linalg.norm(m0.position, m1.position)
+    m0 = m0.moment
+    m1 = m1.moment
+    p1 = -m1[0] * (1/(4 * np.pi)) * (3*(-2*m0[0] * math.pow(r[0], 3) - 4 * math.pow(r[0], 2) * m0[1] * r[1] - 4 * math.pow(r[0], 2) * m0[2] * r[2] + 3*m0[0] * r[0] + math.pow(r[1], 2) + 3 * m0[0] * r[0] * math.pow(r[2], 2) + m0[1] * math.pow(r[1], 3) + m0[1] * r[1] * math.pow(r[2], 2) + math.pow(r[2], 2)*m0[2] * r[2] + m0[2] * math.pow(r[2], 3))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2))
+    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (r[0]*r[0]*r[0] *m0[1] - 4*m0[0]*r[0]*r[0]*r[1] + r[0]*m0[1]*r[2]*r[2] - 4*r[0]*m0[1]*r[1]*r[1] - 5*r[0]*r[1]*m0[2]*r[2] + m0[0]*r[1]*r[1]*r[1] + m0[0]*r[1]*r[2]*r[2]) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)))
+    p3 = -m1[2] * (1/(4 * np.pi)) * ((3*(r[0]*r[0]*r[0]*m0[2] - 4*m0[0]*r[0]*r[0]*r[2] + r[0]*r[0]*r[0]*m0[2] - 4*r[0]*m0[2]*r[2]*r[2] - 5*r[0]*m0[1]*r[1]*r[2] + m0[0]*r[2]*r[2]*r[2] + m0[0]*r[1]*r[1]*r[2])) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)))
+    return p1 + p2 + p3
 
 def partial1Y(mag1, mag2):
     return 5
