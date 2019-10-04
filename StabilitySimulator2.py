@@ -29,9 +29,9 @@ def partialZ(m0, m1):
     r = m0.position - m1.position
     m0 = m0.moment
     m1 = m1.moment
-    p1 = -m1[0] * (1/(4 * np.pi)) * (3 * (r.x*r.x*r.x*m0.z - 4*m0.x*r.x*r.x*r.z + r.x*r.y*r.y*m0.z - 4*r.x*m0.z*r.z*r.z - 5*r.x*m0.y*r.y*r.z + m0.x*r.z*r.z*r.z + m0.x*r.y*r.y*r.z))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
-    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (r.y*r.y*r.y*m0.z - 4*m0.y*r.y*r.y*r.z + r.x*r.x*r.y*m0.z - 4*r.y*m0.z*r.z*r.z - 5*m0.x*r.x*r.y*r.z + r.x*r.x*m0.y*r.z + m0.y*r.z*r.z*r.z))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
-    p3 = -m1[2] * (1/(4 * np.pi)) * (3 * (m0.x*r.x*r.x*r.x + 3*r.x*r.x*m0.z*r.z + r.x*r.x*m0.y*r.y + m0.x*r.x*r.y*r.y - 4*m0.x*r.x*r.z*r.z + m0.y*r.y*r.y*r.y + 3*r.y*r.y*m9.z*r.z - 4*m0.y*r.y*r.z*r.z - 2*m0.z*r.z*r.z*r.z))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    p1 = -m1[0] * (1/(4 * np.pi)) * (3 * (r[0]*r[0]*r[0]*m0[2] - 4*m0[0]*r[0]*r[0]*r[2] + r[0]*r[1]*r[1]*m0[2] - 4*r[0]*m0[2]*r[2]*r[2] - 5*r[0]*m0[1]*r[1]*r[2] + m0[0]*r[2]*r[2]*r[2] + m0[0]*r[1]*r[1]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (r[1]*r[1]*r[1]*m0[2] - 4*m0[1]*r[1]*r[1]*r[2] + r[0]*r[0]*r[1]*m0[2] - 4*r[1]*m0[2]*r[2]*r[2] - 5*m0[0]*r[0]*r[1]*r[2] + r[0]*r[0]*m0[1]*r[2] + m0[1]*r[2]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    p3 = -m1[2] * (1/(4 * np.pi)) * (3 * (m0[0]*r[0]*r[0]*r[0] + 3*r[0]*r[0]*m0[2]*r[2] + r[0]*r[0]*m0[1]*r[1] + m0[0]*r[0]*r[1]*r[1] - 4*m0[0]*r[0]*r[2]*r[2] + m0[1]*r[1]*r[1]*r[1] + 3*r[1]*r[1]*m0[2]*r[2] - 4*m0[1]*r[1]*r[2]*r[2] - 2*m0[2]*r[2]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
     return p1 + p2 + p3
 
 
@@ -59,7 +59,7 @@ class MagnetSimulator:
     MomentPartials = [partial1X, partial1Y, partial1Z, partial2X, partial2Y, partial2Z]
 
     threshold = 0.1
-    distThreshold = 0.1
+    distThreshold = 100
 
     def __init__(self, magnets):
         self.magnets = magnets
@@ -91,7 +91,7 @@ class MagnetSimulator:
         return totalPotential
 
     def pointsTowardsMagnet(self, partialVector, magnet):
-        avgVec = np.array([0, 0, 0])
+        avgVec = np.array([0.0, 0.0, 0.0]) #Center of mass of connected magnets
         for magnet2 in magnets:
             if (not magnet == magnet2) and np.linalg.norm(magnet.position - magnet2.position) < self.distThreshold:
                 vec = magnet2.position - magnet.position
@@ -101,7 +101,8 @@ class MagnetSimulator:
                 if np.linalg.norm(p_hat - v_hat) < self.threshold:
                     return true
         
-        avgVec /= len(magnets)
+        print(avgVec)
+        avgVec = np.true_divide(avgVec, len(magnets))
         p_hat = partialVector / (partialVector**2).sum()**0.5
         if np.linalg.norm(p_hat - avgVec) < self.threshold:
             return true
@@ -121,13 +122,12 @@ class MagnetSimulator:
         # energy = self.getPotentialEnergy(self.magnets)
 
         for mag1 in magnets:
-            partialPos = np.array([0, 0, 0])
+            partialPos = np.array([0.0, 0.0, 0.0])
             partialRot = np.array([0, 0, 0])
             for mag2 in magnets:
                 if not mag1 == mag2:
-                    partialPos += partialX(mag1, mag2)
-                    partialPos += partialY(mag1, mag2)
-                    partialPos += partialZ(mag1, mag2)
+                    print(partialX(mag1, mag2))
+                    partialPos += np.array([partialX(mag1, mag2), partialY(mag1, mag2), partialZ(mag1, mag2)])
                     # partialPos += np.array([partial(mag1, mag2) for partial in self.posPartials])
                     # partialRot += np.array([partial(mag1, mag2) for partial in self.rotPartials])
             
@@ -136,9 +136,6 @@ class MagnetSimulator:
 
             if np.linalg.norm(partialRot) < self.threshold:
                 print("Unstable magnet")
-
-        
-        print(energy)
 
 #378.94 * the orientation
 
