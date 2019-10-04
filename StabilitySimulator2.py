@@ -5,23 +5,38 @@ from Magnet import Magnet
 import math
 import itertools
 
-def partialX(mag1, mag2):
-    return 5
-
-def partialY(mag1, mag2):
-    return 5
-
-def partialZ(mag1, mag2):
-    return 5
-
-def partial1X(m0, m1):
-    r = np.linalg.norm(m0.position, m1.position)
+def partialX(m0, m1):
+    r = m0.position - m1.position
     m0 = m0.moment
     m1 = m1.moment
     p1 = -m1[0] * (1/(4 * np.pi)) * (3*(-2*m0[0] * math.pow(r[0], 3) - 4 * math.pow(r[0], 2) * m0[1] * r[1] - 4 * math.pow(r[0], 2) * m0[2] * r[2] + 3*m0[0] * r[0] + math.pow(r[1], 2) + 3 * m0[0] * r[0] * math.pow(r[2], 2) + m0[1] * math.pow(r[1], 3) + m0[1] * r[1] * math.pow(r[2], 2) + math.pow(r[2], 2)*m0[2] * r[2] + m0[2] * math.pow(r[2], 3))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2))
     p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (r[0]*r[0]*r[0] *m0[1] - 4*m0[0]*r[0]*r[0]*r[1] + r[0]*m0[1]*r[2]*r[2] - 4*r[0]*m0[1]*r[1]*r[1] - 5*r[0]*r[1]*m0[2]*r[2] + m0[0]*r[1]*r[1]*r[1] + m0[0]*r[1]*r[2]*r[2]) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)))
     p3 = -m1[2] * (1/(4 * np.pi)) * ((3*(r[0]*r[0]*r[0]*m0[2] - 4*m0[0]*r[0]*r[0]*r[2] + r[0]*r[0]*r[0]*m0[2] - 4*r[0]*m0[2]*r[2]*r[2] - 5*r[0]*m0[1]*r[1]*r[2] + m0[0]*r[2]*r[2]*r[2] + m0[0]*r[1]*r[1]*r[2])) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)))
     return p1 + p2 + p3
+
+
+def partialY(m0, m1):
+    r = m0.position - m1.position
+    m0 = m0.moment
+    m1 = m1.moment
+    p1 = -m1[0] * (1/(4 * np.pi)) * (3 * (r[0]*r[0]*r[0] + m0[1] - 4*m0[0]*r[0]*r[0]*r[1] + r[0]*m0[1]*r[2]*r[2] - 4*r[0]*m0[1]*r[1]*r[1] - 5*r[0]*r[1]*m0[2]*r[2] + m0[0] * r[1]*r[1]*r[1] + m0[0]*r[1]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (m0[0]*r[0]*r[0]*r[0] + 3*r[0]*r[0]*m0[1]*r[1] + r[0]*r[0]*m0[2]*r[2]+m0[0]*r[0]*r[2]*r[2] - 4*m0[0]*r[0]*r[1]*r[1] + 3*m0[1]*r[1]*r[2]*r[2] + m0[2]*r[2]*r[2]*r[2] - 2*m0[1]*r[1]*r[1]*r[1] - 4*r[1]*r[1]*m0[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    p3 = -m1[2] * (1/(4 * np.pi)) * (3 * (r[1]*r[1]*r[1]*m0[2] - 4*m0[1]*r[1]*r[1]*r[2] + r[0]*r[0]*r[1]*m0[2] - 4*r[1]*m0[2]*r[2]*r[2] - 5*m0[0]*r[0]*r[1]*r[2] + r[0]*r[0]*m0[1]*r[2] + m0[1]*r[2]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    return p1 + p2 + p3
+
+
+def partialZ(m0, m1):
+    r = m0.position - m1.position
+    m0 = m0.moment
+    m1 = m1.moment
+    p1 = -m1[0] * (1/(4 * np.pi)) * (3 * (r.x*r.x*r.x*m0.z - 4*m0.x*r.x*r.x*r.z + r.x*r.y*r.y*m0.z - 4*r.x*m0.z*r.z*r.z - 5*r.x*m0.y*r.y*r.z + m0.x*r.z*r.z*r.z + m0.x*r.y*r.y*r.z))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (r.y*r.y*r.y*m0.z - 4*m0.y*r.y*r.y*r.z + r.x*r.x*r.y*m0.z - 4*r.y*m0.z*r.z*r.z - 5*m0.x*r.x*r.y*r.z + r.x*r.x*m0.y*r.z + m0.y*r.z*r.z*r.z))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    p3 = -m1[2] * (1/(4 * np.pi)) * (3 * (m0.x*r.x*r.x*r.x + 3*r.x*r.x*m0.z*r.z + r.x*r.x*m0.y*r.y + m0.x*r.x*r.y*r.y - 4*m0.x*r.x*r.z*r.z + m0.y*r.y*r.y*r.y + 3*r.y*r.y*m9.z*r.z - 4*m0.y*r.y*r.z*r.z - 2*m0.z*r.z*r.z*r.z))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    return p1 + p2 + p3
+
+
+def partial1X(mag1, mag2):
+    return 5
 
 def partial1Y(mag1, mag2):
     return 5
@@ -48,6 +63,19 @@ class MagnetSimulator:
 
     def __init__(self, magnets):
         self.magnets = magnets
+
+    def getPotentialEnergy(self, magnets):
+        totalPotential = 0
+        for mag1 in magnets:
+            for mag2 in magnets:
+                if not mag1 == mag2:
+                    moment1 = mag1.moment
+                    x = Symbol('x')
+                    moment2 = mag2.moment
+                    r = np.linalg.norm(mag1.position - mag2.position)
+
+                    totalPotential += np.dot(-1*moment2, 1/(4*np.pi)*((3*np.dot(moment1, r)*r)/math.pow(r, 5) - (moment1/math.pow(r, 3))))
+        return totalPotential
 
     def getPotentialEnergy(self, magnets):
         totalPotential = 0
@@ -90,15 +118,18 @@ class MagnetSimulator:
         return false
 
     def run(self):
-        energy = self.getPotentialEnergy(self.magnets)
+        # energy = self.getPotentialEnergy(self.magnets)
 
         for mag1 in magnets:
             partialPos = np.array([0, 0, 0])
             partialRot = np.array([0, 0, 0])
             for mag2 in magnets:
                 if not mag1 == mag2:
-                    partialPos += np.array([partial(mag1, mag2) for partial in self.posPartials])
-                    partialRot += np.array([partial(mag1, mag2) for partial in self.rotPartials])
+                    partialPos += partialX(mag1, mag2)
+                    partialPos += partialY(mag1, mag2)
+                    partialPos += partialZ(mag1, mag2)
+                    # partialPos += np.array([partial(mag1, mag2) for partial in self.posPartials])
+                    # partialRot += np.array([partial(mag1, mag2) for partial in self.rotPartials])
             
             if not self.pointsTowardsMagnet(partialPos, magnet1):
                 print("Unstable magnet")
