@@ -4,6 +4,12 @@ import matplotlib.pyplot as plt
 from Magnet import Magnet
 import math
 import itertools
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+from itertools import product, combinations
+from matplotlib.patches import FancyArrowPatch
+from mpl_toolkits.mplot3d import proj3d
+
 
 def partialX(m0, m1):
     r = m0.position - m1.position
@@ -53,6 +59,19 @@ def partial2Y(mag1, mag2):
 def partial2Z(mag1, mag2):
     return 5
 
+class Arrow3D(FancyArrowPatch):
+
+    def __init__(self, xs, ys, zs, *args, **kwargs):
+        FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
+        self._verts3d = xs, ys, zs
+
+    def draw(self, renderer):
+        xs3d, ys3d, zs3d = self._verts3d
+        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, renderer.M)
+        self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
+        FancyArrowPatch.draw(self, renderer)
+
+
 class MagnetSimulator:
 
     posPartials = [partialX, partialY, partialZ]
@@ -101,7 +120,7 @@ class MagnetSimulator:
                 if np.linalg.norm(p_hat - v_hat) < self.threshold:
                     return true
         
-        print(avgVec)
+        print('Average vector of colliding magnets: ' + str(avgVec))
         avgVec = np.true_divide(avgVec, len(magnets))
         p_hat = partialVector / (partialVector**2).sum()**0.5
         if np.linalg.norm(p_hat - avgVec) < self.threshold:
@@ -121,28 +140,71 @@ class MagnetSimulator:
     def run(self):
         # energy = self.getPotentialEnergy(self.magnets)
 
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+        # ax.set_aspect("equal")
+
         for mag1 in magnets:
             partialPos = np.array([0.0, 0.0, 0.0])
             partialRot = np.array([0, 0, 0])
             for mag2 in magnets:
                 if not mag1 == mag2:
-                    print(partialX(mag1, mag2))
                     partialPos += np.array([partialX(mag1, mag2), partialY(mag1, mag2), partialZ(mag1, mag2)])
                     # partialPos += np.array([partial(mag1, mag2) for partial in self.posPartials])
                     # partialRot += np.array([partial(mag1, mag2) for partial in self.rotPartials])
             
-            if not self.pointsTowardsMagnet(partialPos, magnet1):
-                print("Unstable magnet")
+            print("Magnet Partial: " + str(partialPos))
+            # if not self.pointsTowardsMagnet(partialPos, magnet1):
+            #     print("Unstable magnet")
 
-            if np.linalg.norm(partialRot) < self.threshold:
-                print("Unstable magnet")
+            # draw sphere
+            u, v = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
+            x = np.cos(u)*np.sin(v)*mag1.radius + mag1.position[0]
+            y = np.sin(u)*np.sin(v)*mag1.radius + mag1.position[1]
+            z = np.cos(v)*mag1.radius + mag1.position[2]
+            ax.plot_wireframe(x, y, z, color=mag1.color)
+
+            # draw a vector
+            partialPos = (partialPos / (partialPos**2).sum()**0.5)/50
+            gx = partialPos[0]
+            gy = partialPos[1]
+            gz = partialPos[2]
+
+            px = mag1.position[0]
+            py = mag1.position[1]
+            pz = mag1.position[2]
+
+            a = Arrow3D([px, px+gx], [py, py+gy], [pz, pz+gz], mutation_scale=20, lw=3, arrowstyle="-|>", color="k")
+            ax.add_artist(a)
+            print("Displaying a Gradient Vector")
+
+
+            # draw a vector
+            moment = (mag1.moment / (mag1.moment**2).sum()**0.5)/50
+            gx = moment[0]
+            gy = moment[1]
+            gz = moment[2]
+            a = Arrow3D([px, px+gx], [py, py+gy], [pz, pz+gz], mutation_scale=20, lw=1, arrowstyle="-|>", color=mag1.color)
+            ax.add_artist(a)
+
+            # if np.linalg.norm(partialRot) < self.threshold:
+            #     print("Unstable magnet")
+        # draw cube
+        r = [-0.025, 0.025]
+        for s, e in combinations(np.array(list(product(r, r, r))), 2):
+            if np.sum(np.abs(s-e)) == r[1]-r[0]:
+                ax.plot3D(*zip(s, e), color="k")
+        plt.show()
 
 #378.94 * the orientation
 
 
 if __name__ == "__main__":
-    magnet1 = Magnet(np.array([100, 0, 0]), 0.003175, np.array([0, 0, 0]))
-    magnet2 = Magnet(np.array([100, 0, 0]), 0.003175, np.array([-1, 0, 0]))
-    magnets = [magnet1, magnet2]
+    magnet1 = Magnet(np.array([-1, 1, 0]), 0.003175, np.array([0, 0, 0]), 'r')
+    magnet2 = Magnet(np.array([-1, -1, 0]), 0.003175, np.array([0.003175*2, 0, 0]), 'g')
+    magnet3 = Magnet(np.array([1, 0, 0]), 0.003175, np.array([0.003175, 0.005499261314, 0]), 'b')
+    magnets = [magnet1, magnet2, magnet3]
     sim = MagnetSimulator(magnets)
     sim.run()
+
+# 0.003175*2 ^2 - 

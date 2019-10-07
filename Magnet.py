@@ -22,8 +22,9 @@ class Magnet:
     def getMomentRemanence(self):
         return (1/mue) * Br * ((4/3) * np.pi * math.pow(self.radius, 3)) * (self.magnetization / (self.magnetization**2).sum()**0.5)
 
-    def __init__(self, baseMagnetization, radius, position):
+    def __init__(self, baseMagnetization, radius, position, color='r'):
         self.magnetization = self.getMagnetization(baseMagnetization)
         self.radius = radius
         self.position = position
         self.moment = self.getMomentRemanence()#self.getMoment(self.magnetization)
+        self.color = color
