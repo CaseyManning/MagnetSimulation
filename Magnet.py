@@ -12,6 +12,8 @@ H0 = np.array([0, 0, 0]) #Uniform external magnetic field
 Br = 1.1 # (1.5?) Residual Flux Density of neodymium (Wikipedia et al., 2019)
 
 class Magnet:
+
+    radius = 0.003175
     
     def getMomentOld(self, magnetization):
         return (4*np.pi / 3) * np.power(self.radius, 3) * magnetization

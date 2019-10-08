@@ -10,7 +10,6 @@ from itertools import product, combinations
 from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import proj3d
 
-
 def partialX(m0, m1):
     r = m0.position - m1.position
     m0 = m0.moment
@@ -20,7 +19,6 @@ def partialX(m0, m1):
     p3 = -m1[2] * (1/(4 * np.pi)) * ((3*(r[0]*r[0]*r[0]*m0[2] - 4*m0[0]*r[0]*r[0]*r[2] + r[0]*r[0]*r[0]*m0[2] - 4*r[0]*m0[2]*r[2]*r[2] - 5*r[0]*m0[1]*r[1]*r[2] + m0[0]*r[2]*r[2]*r[2] + m0[0]*r[1]*r[1]*r[2])) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)))
     return p1 + p2 + p3
 
-
 def partialY(m0, m1):
     r = m0.position - m1.position
     m0 = m0.moment
@@ -29,7 +27,6 @@ def partialY(m0, m1):
     p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (m0[0]*r[0]*r[0]*r[0] + 3*r[0]*r[0]*m0[1]*r[1] + r[0]*r[0]*m0[2]*r[2]+m0[0]*r[0]*r[2]*r[2] - 4*m0[0]*r[0]*r[1]*r[1] + 3*m0[1]*r[1]*r[2]*r[2] + m0[2]*r[2]*r[2]*r[2] - 2*m0[1]*r[1]*r[1]*r[1] - 4*r[1]*r[1]*m0[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
     p3 = -m1[2] * (1/(4 * np.pi)) * (3 * (r[1]*r[1]*r[1]*m0[2] - 4*m0[1]*r[1]*r[1]*r[2] + r[0]*r[0]*r[1]*m0[2] - 4*r[1]*m0[2]*r[2]*r[2] - 5*m0[0]*r[0]*r[1]*r[2] + r[0]*r[0]*m0[1]*r[2] + m0[1]*r[2]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
     return p1 + p2 + p3
-
 
 def partialZ(m0, m1):
     r = m0.position - m1.position
@@ -195,25 +192,22 @@ def line(num, ldir, momentDir):
     colors = ['r', 'g', 'b', 'r', 'g', 'b']
     for i in range(num):
        
-        ret.append(Magnet(np.array([1 if 'x' in momentDir else 0,  1 if 'y' in momentDir else 0,  1 if 'z' in momentDir else 0]), 0.003175, np.array([0.003175*2*i if 'x' in ldir else 0, 0.003175*2*i if 'y' in ldir else 0, 0.003175*2*i if 'z' in ldir else 0]), colors[i]))
+        ret.append(Magnet(np.array([1 if 'x' in momentDir else 0,  1 if 'y' in momentDir else 0,  1 if 'z' in momentDir else 0]), Magnet.radius, np.array([Magnet.radius*2*i if 'x' in ldir else 0, Magnet.radius*2*i if 'y' in ldir else 0, Magnet.radius*2*i if 'z' in ldir else 0]), colors[i]))
 
     return ret
 
 def loop(num):
-    magnet1 = Magnet(np.array([-1, 1, 0]), 0.003175, np.array([0, 0, 0]), 'r')
-    magnet2 = Magnet(np.array([-1, -1, 0]), 0.003175, np.array([0.003175*2, 0, 0]), 'g')
-    magnet3 = Magnet(np.array([1, 0, 0]), 0.003175, np.array([0.003175, 0.005499261314, 0]), 'b')
+    magnet1 = Magnet(np.array([-1, 1, 0]), Magnet.radius, np.array([0, 0, 0]), 'r')
+    magnet2 = Magnet(np.array([-1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, 0, 0]), 'g')
+    magnet3 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([Magnet.radius, 0.005499261314, 0]), 'b')
     return [magnet1, magnet2, magnet3]
- 
 
 if __name__ == "__main__":
     
-    mag1 = Magnet(np.array([-1, 0, 0]), 0.003175, np.array([0, 0, 0.003175*2]), 'b')
-    mag2 = Magnet(np.array([1, 0, 0]), 0.003175, np.array([0, 0, 0]), 'b')
+    mag1 = Magnet(np.array([-1, 0, 0]), Magnet.radius, np.array([0, 0, Magnet.radius*2]), 'b')
+    mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
     magnets = line(3, ldir='z', momentDir='x')
     # magnets = loop(3)
     sim = MagnetSimulator(magnets)
     sim.run()
-
-# 0.003175*2 ^2 - 
