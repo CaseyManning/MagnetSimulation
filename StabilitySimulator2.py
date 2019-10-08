@@ -204,7 +204,7 @@ def loop(num):
     magnet2 = Magnet(np.array([-1, -1, 0]), 0.003175, np.array([0.003175*2, 0, 0]), 'g')
     magnet3 = Magnet(np.array([1, 0, 0]), 0.003175, np.array([0.003175, 0.005499261314, 0]), 'b')
     return [magnet1, magnet2, magnet3]
-
+ 
 
 if __name__ == "__main__":
     
