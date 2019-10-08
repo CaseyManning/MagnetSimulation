@@ -88,20 +88,6 @@ class MagnetSimulator:
             for mag2 in magnets:
                 if not mag1 == mag2:
                     moment1 = mag1.moment
-                    x = Symbol('x')
-                    moment2 = mag2.moment
-                    r = np.linalg.norm(mag1.position - mag2.position)
-
-                    totalPotential += np.dot(-1*moment2, 1/(4*np.pi)*((3*np.dot(moment1, r)*r)/math.pow(r, 5) - (moment1/math.pow(r, 3))))
-        return totalPotential
-
-    def getPotentialEnergy(self, magnets):
-        totalPotential = 0
-        for mag1 in magnets:
-            for mag2 in magnets:
-                if not mag1 == mag2:
-                    moment1 = mag1.moment
-                    x = Symbol('x')
                     moment2 = mag2.moment
                     r = np.linalg.norm(mag1.position - mag2.position)
 
@@ -204,11 +190,12 @@ class MagnetSimulator:
         self.draw(partials)
 
 
-def line(num):
+def line(num, ldir, momentDir):
     ret = []
     colors = ['r', 'g', 'b', 'r', 'g', 'b']
     for i in range(num):
-        ret.append(Magnet(np.array([1, 0, 0]), 0.003175, np.array([0.003175*2*i - (0.003175*num)/2, 0, 0]), colors[i]))
+       
+        ret.append(Magnet(np.array([1 if 'x' in momentDir else 0,  1 if 'y' in momentDir else 0,  1 if 'z' in momentDir else 0]), 0.003175, np.array([0.003175*2*i if 'x' in ldir else 0, 0.003175*2*i if 'y' in ldir else 0, 0.003175*2*i if 'z' in ldir else 0]), colors[i]))
 
     return ret
 
@@ -221,7 +208,11 @@ def loop(num):
 
 if __name__ == "__main__":
     
-    magnets = loop(4)
+    mag1 = Magnet(np.array([-1, 0, 0]), 0.003175, np.array([0, 0, 0.003175*2]), 'b')
+    mag2 = Magnet(np.array([1, 0, 0]), 0.003175, np.array([0, 0, 0]), 'b')
+
+    magnets = line(3, ldir='z', momentDir='x')
+    # magnets = loop(3)
     sim = MagnetSimulator(magnets)
     sim.run()
 
