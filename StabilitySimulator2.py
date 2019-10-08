@@ -1,6 +1,5 @@
 from matplotlib.widgets import Slider, Button, RadioButtons
 import numpy as np
-from sympy import *
 import matplotlib.pyplot as plt
 from Magnet import Magnet
 import math
@@ -162,7 +161,7 @@ class MagnetSimulator:
             py = self.magnets[i].position[1]
             pz = self.magnets[i].position[2]
 
-            a = Arrow3D([px, px+gx], [py, py+gy], [pz, pz+gz], mutation_scale=20, lw=2, arrowstyle="-|>", color="k")
+            a = Arrow3D([px, px+gx], [py, py+gy], [pz, pz+gz], mutation_scale=20, lw=4, arrowstyle="-|>", color="k")
             ax.add_artist(a)
             print("Displaying a Gradient Vector")
 
@@ -205,15 +204,24 @@ class MagnetSimulator:
         self.draw(partials)
 
 
-if __name__ == "__main__":
+def line(num):
+    ret = []
+    colors = ['r', 'g', 'b', 'r', 'g', 'b']
+    for i in range(num):
+        ret.append(Magnet(np.array([1, 0, 0]), 0.003175, np.array([0.003175*2*i - (0.003175*num)/2, 0, 0]), colors[i]))
+
+    return ret
+
+def loop(num):
     magnet1 = Magnet(np.array([-1, 1, 0]), 0.003175, np.array([0, 0, 0]), 'r')
     magnet2 = Magnet(np.array([-1, -1, 0]), 0.003175, np.array([0.003175*2, 0, 0]), 'g')
     magnet3 = Magnet(np.array([1, 0, 0]), 0.003175, np.array([0.003175, 0.005499261314, 0]), 'b')
+    return [magnet1, magnet2, magnet3]
 
-    # magnet1 = Magnet(np.array([1, 0, 0]), 0.003175, np.array([0, 0, 0]), 'r')
-    # magnet2 = Magnet(np.array([1, 0, 0]), 0.003175, np.array([0.003175*2, 0, 0]), 'g')
 
-    magnets = [magnet1, magnet2, magnet3]
+if __name__ == "__main__":
+    
+    magnets = loop(4)
     sim = MagnetSimulator(magnets)
     sim.run()
 
