@@ -100,13 +100,13 @@ class MagnetSimulator:
                 avgVec += v_hat
                 p_hat = partialVector / (partialVector**2).sum()**0.5
                 if np.linalg.norm(p_hat - v_hat) < self.threshold:
-                    return true
+                    return True
         
         print('Average vector of colliding magnets: ' + str(avgVec))
         avgVec = np.true_divide(avgVec, len(magnets))
         p_hat = partialVector / (partialVector**2).sum()**0.5
         if np.linalg.norm(p_hat - avgVec) < self.threshold:
-            return true
+            return True
                 
                 # for magnet3 in magnets:
                 #     if (not (magnet3 == magnet or magnet3 == magnet2)) and np.linalg.norm(magnet.position - magnet3.position) < self.distThreshold:
@@ -117,7 +117,7 @@ class MagnetSimulator:
                 #         p_hat = partialVector / (partialVector**2).sum()**0.5
                 #         if np.linalg.norm(p_hat - avgVec_hat) < self.threshold:
                 #             return true
-        return false
+        return False
 
 
     def draw(self, partials):
