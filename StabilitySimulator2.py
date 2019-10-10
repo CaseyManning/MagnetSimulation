@@ -14,27 +14,27 @@ def partialX(m0, m1):
     r = m0.position - m1.position
     m0 = m0.moment
     m1 = m1.moment
-    p1 = -m1[0] * (1/(4 * np.pi)) * (3*(-2*m0[0] * math.pow(r[0], 3) - 4 * math.pow(r[0], 2) * m0[1] * r[1] - 4 * math.pow(r[0], 2) * m0[2] * r[2] + 3*m0[0] * r[0] + math.pow(r[1], 2) + 3 * m0[0] * r[0] * math.pow(r[2], 2) + m0[1] * math.pow(r[1], 3) + m0[1] * r[1] * math.pow(r[2], 2) + math.pow(r[2], 2)*m0[2] * r[2] + m0[2] * math.pow(r[2], 3))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2))
-    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (r[0]*r[0]*r[0] *m0[1] - 4*m0[0]*r[0]*r[0]*r[1] + r[0]*m0[1]*r[2]*r[2] - 4*r[0]*m0[1]*r[1]*r[1] - 5*r[0]*r[1]*m0[2]*r[2] + m0[0]*r[1]*r[1]*r[1] + m0[0]*r[1]*r[2]*r[2]) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)))
-    p3 = -m1[2] * (1/(4 * np.pi)) * ((3*(r[0]*r[0]*r[0]*m0[2] - 4*m0[0]*r[0]*r[0]*r[2] + r[0]*r[0]*r[0]*m0[2] - 4*r[0]*m0[2]*r[2]*r[2] - 5*r[0]*m0[1]*r[1]*r[2] + m0[0]*r[2]*r[2]*r[2] + m0[0]*r[1]*r[1]*r[2])) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)))
+    p1 = -m1[0] * (1/(4 * np.pi)) * (3*(-2*m0[0] * math.pow(r[0], 3) - 4 * math.pow(r[0], 2) * m0[1] * r[1] - 4 * math.pow(r[0], 2) * m0[2] * r[2] + 3*m0[0] * r[0] * math.pow(r[1], 2) + 3 * m0[0] * r[0] * math.pow(r[2], 2) + m0[1] * math.pow(r[1], 3) + m0[1] * r[1] * math.pow(r[2], 2) + math.pow(r[2], 2)*m0[2] * r[2] + m0[2] * math.pow(r[2], 3))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2))
+    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (r[0]*r[0]*r[0] *m0[1] - 4*m0[0]*r[0]*r[0]*r[1] + r[0]*m0[1]*r[2]*r[2] - 4*r[0]*m0[1]*r[1]*r[1] - 5*r[0]*r[1]*m0[2]*r[2] + m0[0]*r[1]*r[1]*r[1] + m0[0]*r[1]*r[2]*r[2]) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2)))
+    p3 = -m1[2] * (1/(4 * np.pi)) * ((3*(r[0]*r[0]*r[0]*m0[2] - 4*m0[0]*r[0]*r[0]*r[2] + r[0]*r[0]*r[0]*m0[2] - 4*r[0]*m0[2]*r[2]*r[2] - 5*r[0]*m0[1]*r[1]*r[2] + m0[0]*r[2]*r[2]*r[2] + m0[0]*r[1]*r[1]*r[2])) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2)))
     return p1 + p2 + p3
 
 def partialY(m0, m1):
     r = m0.position - m1.position
     m0 = m0.moment
     m1 = m1.moment
-    p1 = -m1[0] * (1/(4 * np.pi)) * (3 * (r[0]*r[0]*r[0] + m0[1] - 4*m0[0]*r[0]*r[0]*r[1] + r[0]*m0[1]*r[2]*r[2] - 4*r[0]*m0[1]*r[1]*r[1] - 5*r[0]*r[1]*m0[2]*r[2] + m0[0] * r[1]*r[1]*r[1] + m0[0]*r[1]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
-    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (m0[0]*r[0]*r[0]*r[0] + 3*r[0]*r[0]*m0[1]*r[1] + r[0]*r[0]*m0[2]*r[2]+m0[0]*r[0]*r[2]*r[2] - 4*m0[0]*r[0]*r[1]*r[1] + 3*m0[1]*r[1]*r[2]*r[2] + m0[2]*r[2]*r[2]*r[2] - 2*m0[1]*r[1]*r[1]*r[1] - 4*r[1]*r[1]*m0[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
-    p3 = -m1[2] * (1/(4 * np.pi)) * (3 * (r[1]*r[1]*r[1]*m0[2] - 4*m0[1]*r[1]*r[1]*r[2] + r[0]*r[0]*r[1]*m0[2] - 4*r[1]*m0[2]*r[2]*r[2] - 5*m0[0]*r[0]*r[1]*r[2] + r[0]*r[0]*m0[1]*r[2] + m0[1]*r[2]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    p1 = -m1[0] * (1/(4 * np.pi)) * (3 * (r[0]*r[0]*r[0] + m0[1] - 4*m0[0]*r[0]*r[0]*r[1] + r[0]*m0[1]*r[2]*r[2] - 4*r[0]*m0[1]*r[1]*r[1] - 5*r[0]*r[1]*m0[2]*r[2] + m0[0] * r[1]*r[1]*r[1] + m0[0]*r[1]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2)
+    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (m0[0]*r[0]*r[0]*r[0] + 3*r[0]*r[0]*m0[1]*r[1] + r[0]*r[0]*m0[2]*r[2]+m0[0]*r[0]*r[2]*r[2] - 4*m0[0]*r[0]*r[1]*r[1] + 3*m0[1]*r[1]*r[2]*r[2] + m0[2]*r[2]*r[2]*r[2] - 2*m0[1]*r[1]*r[1]*r[1] - 4*r[1]*r[1]*m0[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2)
+    p3 = -m1[2] * (1/(4 * np.pi)) * (3 * (r[1]*r[1]*r[1]*m0[2] - 4*m0[1]*r[1]*r[1]*r[2] + r[0]*r[0]*r[1]*m0[2] - 4*r[1]*m0[2]*r[2]*r[2] - 5*m0[0]*r[0]*r[1]*r[2] + r[0]*r[0]*m0[1]*r[2] + m0[1]*r[2]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2)
     return p1 + p2 + p3
 
 def partialZ(m0, m1):
     r = m0.position - m1.position
     m0 = m0.moment
     m1 = m1.moment
-    p1 = -m1[0] * (1/(4 * np.pi)) * (3 * (r[0]*r[0]*r[0]*m0[2] - 4*m0[0]*r[0]*r[0]*r[2] + r[0]*r[1]*r[1]*m0[2] - 4*r[0]*m0[2]*r[2]*r[2] - 5*r[0]*m0[1]*r[1]*r[2] + m0[0]*r[2]*r[2]*r[2] + m0[0]*r[1]*r[1]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
-    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (r[1]*r[1]*r[1]*m0[2] - 4*m0[1]*r[1]*r[1]*r[2] + r[0]*r[0]*r[1]*m0[2] - 4*r[1]*m0[2]*r[2]*r[2] - 5*m0[0]*r[0]*r[1]*r[2] + r[0]*r[0]*m0[1]*r[2] + m0[1]*r[2]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
-    p3 = -m1[2] * (1/(4 * np.pi)) * (3 * (m0[0]*r[0]*r[0]*r[0] + 3*r[0]*r[0]*m0[2]*r[2] + r[0]*r[0]*m0[1]*r[1] + m0[0]*r[0]*r[1]*r[1] - 4*m0[0]*r[0]*r[2]*r[2] + m0[1]*r[1]*r[1]*r[1] + 3*r[1]*r[1]*m0[2]*r[2] - 4*m0[1]*r[1]*r[2]*r[2] - 2*m0[2]*r[2]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7.2)
+    p1 = -m1[0] * (1/(4 * np.pi)) * (3 * (r[0]*r[0]*r[0]*m0[2] - 4*m0[0]*r[0]*r[0]*r[2] + r[0]*r[1]*r[1]*m0[2] - 4*r[0]*m0[2]*r[2]*r[2] - 5*r[0]*m0[1]*r[1]*r[2] + m0[0]*r[2]*r[2]*r[2] + m0[0]*r[1]*r[1]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2)
+    p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (r[1]*r[1]*r[1]*m0[2] - 4*m0[1]*r[1]*r[1]*r[2] + r[0]*r[0]*r[1]*m0[2] - 4*r[1]*m0[2]*r[2]*r[2] - 5*m0[0]*r[0]*r[1]*r[2] + r[0]*r[0]*m0[1]*r[2] + m0[1]*r[2]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2)
+    p3 = -m1[2] * (1/(4 * np.pi)) * (3 * (m0[0]*r[0]*r[0]*r[0] + 3*r[0]*r[0]*m0[2]*r[2] + r[0]*r[0]*m0[1]*r[1] + m0[0]*r[0]*r[1]*r[1] - 4*m0[0]*r[0]*r[2]*r[2] + m0[1]*r[1]*r[1]*r[1] + 3*r[1]*r[1]*m0[2]*r[2] - 4*m0[1]*r[1]*r[2]*r[2] - 2*m0[2]*r[2]*r[2]*r[2]))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2)
     return p1 + p2 + p3
 
 
@@ -100,13 +100,13 @@ class MagnetSimulator:
                 avgVec += v_hat
                 p_hat = partialVector / (partialVector**2).sum()**0.5
                 if np.linalg.norm(p_hat - v_hat) < self.threshold:
-                    return true
+                    return True
         
         print('Average vector of colliding magnets: ' + str(avgVec))
         avgVec = np.true_divide(avgVec, len(magnets))
         p_hat = partialVector / (partialVector**2).sum()**0.5
         if np.linalg.norm(p_hat - avgVec) < self.threshold:
-            return true
+            return True
                 
                 # for magnet3 in magnets:
                 #     if (not (magnet3 == magnet or magnet3 == magnet2)) and np.linalg.norm(magnet.position - magnet3.position) < self.distThreshold:
@@ -117,7 +117,7 @@ class MagnetSimulator:
                 #         p_hat = partialVector / (partialVector**2).sum()**0.5
                 #         if np.linalg.norm(p_hat - avgVec_hat) < self.threshold:
                 #             return true
-        return false
+        return False
 
 
     def draw(self, partials):
