@@ -16,7 +16,7 @@ def partialX(m0, m1):
     m1 = m1.moment
     p1 = -m1[0] * (1/(4 * np.pi)) * (3*(-2*m0[0] * math.pow(r[0], 3) - 4 * math.pow(r[0], 2) * m0[1] * r[1] - 4 * math.pow(r[0], 2) * m0[2] * r[2] + 3*m0[0] * r[0] * math.pow(r[1], 2) + 3 * m0[0] * r[0] * math.pow(r[2], 2) + m0[1] * math.pow(r[1], 3) + m0[1] * r[1] * math.pow(r[2], 2) + math.pow(r[1], 2)*m0[2] * r[2] + m0[2] * math.pow(r[2], 3))/math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2))
     p2 = -m1[1] * (1/(4 * np.pi)) * (3 * (math.pow(r[0],3)*m0[1] - 4*m0[0]*math.pow(r[0],2)*r[1] + r[0]*m0[1]*math.pow(r[2],2) - 4*r[0]*m0[1]*math.pow(r[1],2) - 5*r[0]*r[1]*m0[2]*r[2] + m0[0]*math.pow(r[1],3) + m0[0]*r[1]*math.pow(r[2],2)) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2)))
-    p3 = -m1[2] * (1/(4 * np.pi)) * (3*(math.pow(r[0],3)*m0[2] - 4*m0[0]*math.pow(r[0],2)*r[2] + math.pow(r[0],3)*m0[2] - 4*r[0]*m0[2]*math.pow(r[2],2) - 5*r[0]*m0[1]*r[1]*r[2] + m0[0]*math.pow(r[2],3) + m0[0]*math.pow(r[1],2)*r[2])) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2)))
+    p3 = -m1[2] * (1/(4 * np.pi)) * (3*(math.pow(r[0],3)*m0[2] - 4*m0[0]*math.pow(r[0],2)*r[2] + math.pow(r[0],3)*m0[2] - 4*r[0]*m0[2]*math.pow(r[2],2) - 5*r[0]*m0[1]*r[1]*r[2] + m0[0]*math.pow(r[2],3) + m0[0]*math.pow(r[1],2)*r[2])) / (math.pow(math.pow(r[0], 2) + math.pow(r[1], 2) + math.pow(r[2], 2), 7/2))
     return p1 + p2 + p3
 
 def partialY(m0, m1):
@@ -213,7 +213,7 @@ if __name__ == "__main__":
     mag1 = Magnet(np.array([-1, 0, 0]), Magnet.radius, np.array([0, 0, Magnet.radius*2]), 'b')
     mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
-    magnets = line(3, ldir='y', momentDir='x')
-    # magnets = loop(3)
+    #magnets = line(3, ldir='y', momentDir='x')
+    magnets = loop(3)
     sim = MagnetSimulator(magnets)
     sim.run()
