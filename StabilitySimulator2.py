@@ -119,7 +119,6 @@ class MagnetSimulator:
                 #             return true
         return False
 
-
     def draw(self, partials):
 
         fig = plt.figure()
@@ -195,6 +194,16 @@ def line(num, ldir, momentDir):
 
     return ret
 
+def grid(x, y, z, momentDir):
+    ret = []
+    for i in range(x):
+        for j in range(y):
+            for k in range(z):
+                ret.append(Magnet(np.array([1 if 'x' in momentDir else 0,  1 if 'y' in momentDir else 0,  1 if 'z' in momentDir else 0]), Magnet.radius, np.array([Magnet.radius*2*i, Magnet.radius*2*j, Magnet.radius*2*k]), colors[i]))
+
+    return ret
+
+
 def loop(num):
     loop = []
     for i in range(num): #OFF BY ONE ERROR HERE
@@ -214,6 +223,7 @@ if __name__ == "__main__":
     mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
     #magnets = line(3, ldir='y', momentDir='x')
-    magnets = loop(3)
+    # magnets = loop(3)
+    magnets = grid(3, 3, 3, 'x')
     sim = MagnetSimulator(magnets)
     sim.run()
