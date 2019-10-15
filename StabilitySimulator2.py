@@ -71,7 +71,8 @@ class Arrow3D(FancyArrowPatch):
 class MagnetSimulator:
 
     posPartials = [partialX, partialY, partialZ]
-    MomentPartials = [partial1X, partial1Y, partial1Z, partial2X, partial2Y, partial2Z]
+    rotPartials1 = [partial1X, partial1Y, partial1Z]
+    rotPartials1 = [partial2X, partial2Y, partial2Z]
 
     threshold = 0.1
     distThreshold = 100
@@ -167,15 +168,17 @@ class MagnetSimulator:
     def run(self):
         # energy = self.getPotentialEnergy(self.magnets)
         partials = []
+        rotPartials = {}
 
         for mag1 in magnets:
             partialPos = np.array([0.0, 0.0, 0.0])
             partialRot = np.array([0, 0, 0])
             for mag2 in magnets:
                 if not mag1 == mag2:
-                    partialPos += np.array([partialX(mag1, mag2), partialY(mag1, mag2), partialZ(mag1, mag2)])
-                    # partialPos += np.array([partial(mag1, mag2) for partial in self.posPartials])
-                    # partialRot += np.array([partial(mag1, mag2) for partial in self.rotPartials])
+                    partialPos += np.array([partial(mag1, mag2) for partial in self.posPartials])
+
+                    rotPartials[mag1] = np.array([partial(mag1, mag2) for partial in self.rotPartials1])
+                    rotPartials[mag2] = np.array([partial(mag1, mag2) for partial in self.rotPartials1])
                     
             
             print("Magnet Partial: " + str(partialPos))
@@ -225,6 +228,6 @@ if __name__ == "__main__":
     mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
     # magnets = line(3, ldir='z', momentDir='x')
-    magnets = loop(20, True)
+    magnets = loop(20, False)
     sim = MagnetSimulator(magnets)
     sim.run()
