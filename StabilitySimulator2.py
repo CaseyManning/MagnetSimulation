@@ -186,7 +186,7 @@ class MagnetSimulator:
 
         self.draw(partials)
 
-colors = ['r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b']
+colors = ['r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b']
 def line(num, ldir, momentDir):
     ret = []
     for i in range(num):
@@ -195,18 +195,20 @@ def line(num, ldir, momentDir):
 
     return ret
 
-def loop(num):
+def loop(num, counterclockwise):
     loop = []
     for i in range(num): #OFF BY ONE ERROR HERE
         theta = (i*2*np.pi)/(num)
         print(theta)
         magnetDirection = np.array([-np.sin(theta), np.cos(theta), 0])
+        if counterclockwise == False:
+            magnetDirection *= -1
         # posVecMag = Magnet.radius/(np.cos(theta/2))
         posVecMag = Magnet.radius/(np.sin(np.pi/num))
         magnetPosition = np.array([posVecMag*np.cos(theta), posVecMag*np.sin(theta), 0])
         loop.append(Magnet(magnetDirection, Magnet.radius, magnetPosition, colors[i]))
     return loop
-
+    
 
 if __name__ == "__main__":
     
@@ -214,6 +216,6 @@ if __name__ == "__main__":
     mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
     # magnets = line(3, ldir='z', momentDir='x')
-    magnets = loop(13)
+    magnets = loop(20, True)
     sim = MagnetSimulator(magnets)
     sim.run()
