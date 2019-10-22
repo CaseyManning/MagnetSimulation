@@ -185,11 +185,12 @@ class MagnetSimulator:
             print("Magnet Partial: " + str(partialPos))
             partials.append(partialPos)
             if not self.pointsTowardsMagnet(partialPos, mag1):
+                mag1.color = 'r'
                 print("Unstable magnet")
 
         self.draw(partials)
 
-colors = ['r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b', 'r', 'g', 'b']
+colors = ['g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b']
 def line(num, ldir, momentDir):
     ret = []
     for i in range(num):
