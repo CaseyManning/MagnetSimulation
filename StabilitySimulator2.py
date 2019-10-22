@@ -93,7 +93,6 @@ class MagnetSimulator:
         return totalPotential
 
     def pointsTowardsMagnet(self, partialVector, magnet):
-        partialVector = -partialVector
         avgVec = np.array([0.0, 0.0, 0.0]) #Center of mass of connected magnets
         for magnet2 in magnets:
             if (not magnet == magnet2) and np.linalg.norm(magnet.position - magnet2.position) < self.distThreshold:
@@ -181,7 +180,7 @@ class MagnetSimulator:
                     rotPartials[mag1] = np.array([partial(mag1, mag2) for partial in self.rotPartials1])
                     rotPartials[mag2] = np.array([partial(mag1, mag2) for partial in self.rotPartials1])
                     
-            
+            partialPos = -partialPos
             print("Magnet Partial: " + str(partialPos))
             partials.append(partialPos)
             if not self.pointsTowardsMagnet(partialPos, mag1):
@@ -226,7 +225,7 @@ def loop(num, counterclockwise):
 
 def saddle():
     saddle = [
-        Magnet(np.array([1, 1, 0]), Magnet.radius, np.array([0, 0, 0]), colors[0]),
+        Magnet(np.array([2, 1, 0]), Magnet.radius, np.array([0, 0, 0]), colors[0]),
         Magnet(np.array([1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, 0, 0]), colors[1]),
         Magnet(np.array([-1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, Magnet.radius*2, 0]), colors[2]),
         Magnet(np.array([-1, 1, 0]), Magnet.radius, np.array([0, Magnet.radius*2, 0]), colors[3])
