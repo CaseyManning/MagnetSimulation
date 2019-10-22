@@ -224,12 +224,22 @@ def loop(num, counterclockwise):
     return loop
     
 
+def saddle():
+    saddle = [
+        Magnet(np.array([1, 1, 0]), Magnet.radius, np.array([0, 0, 0]), colors[0]),
+        Magnet(np.array([1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, 0, 0]), colors[1]),
+        Magnet(np.array([-1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, Magnet.radius*2, 0]), colors[2]),
+        Magnet(np.array([-1, 1, 0]), Magnet.radius, np.array([0, Magnet.radius*2, 0]), colors[3])
+    ]
+    return saddle
+
 if __name__ == "__main__":
     
     mag1 = Magnet(np.array([-1, 0, 0]), Magnet.radius, np.array([0, 0, Magnet.radius*2]), 'b')
     mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
     # magnets = line(3, ldir='z', momentDir='x')
-    magnets = line(5,'x','y')
+    # magnets = line(5,'x','y')
+    magnets = saddle()
     sim = MagnetSimulator(magnets)
     sim.run()
