@@ -93,6 +93,7 @@ class MagnetSimulator:
         return totalPotential
 
     def pointsTowardsMagnet(self, partialVector, magnet):
+        partialVector = -partialVector
         avgVec = np.array([0.0, 0.0, 0.0]) #Center of mass of connected magnets
         for magnet2 in magnets:
             if (not magnet == magnet2) and np.linalg.norm(magnet.position - magnet2.position) < self.distThreshold:
@@ -183,8 +184,8 @@ class MagnetSimulator:
             
             print("Magnet Partial: " + str(partialPos))
             partials.append(partialPos)
-            # if not self.pointsTowardsMagnet(partialPos, magnet1):
-            #     print("Unstable magnet")
+            if not self.pointsTowardsMagnet(partialPos, mag1):
+                print("Unstable magnet")
 
         self.draw(partials)
 
@@ -212,12 +213,12 @@ def loop(num, counterclockwise):
     for i in range(num): #OFF BY ONE ERROR HERE
         theta = (i*2*np.pi)/(num)
         print(theta)
-        magnetDirection = np.array([-np.sin(theta), np.cos(theta), 0])
+        magnetDirection = np.array([-np.sin(theta), np.cos(theta),0])
         if counterclockwise == False:
             magnetDirection *= -1
         # posVecMag = Magnet.radius/(np.cos(theta/2))
         posVecMag = Magnet.radius/(np.sin(np.pi/num))
-        magnetPosition = np.array([posVecMag*np.cos(theta), posVecMag*np.sin(theta), 0])
+        magnetPosition = np.array([posVecMag*np.cos(theta), posVecMag*np.sin(theta),0])
         loop.append(Magnet(magnetDirection, Magnet.radius, magnetPosition, colors[i]))
     return loop
     
@@ -228,6 +229,6 @@ if __name__ == "__main__":
     mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
     # magnets = line(3, ldir='z', momentDir='x')
-    magnets = loop(20, False)
+    magnets = line(5,'x','y')
     sim = MagnetSimulator(magnets)
     sim.run()
