@@ -1,5 +1,7 @@
 import bpy
 from bpy.props import *
+from . StabilitySimulator2 import MagnetSimulator
+from . Magnet import Magnet
 
 bl_info = {
     "name" : "MagnetGenerator",
@@ -21,8 +23,17 @@ class Test_OT_Operator(bpy.types.Operator):
     #     return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        bpy.ops.view3d.snap_cursor_to_center()
-        bpy.ops.mesh.primitive_uv_sphere_add(radius=context.scene.by_tool.num_magnets, enter_editmode=False, location=(1.49944, 0.813217, 3.65082))
+
+        bytool = context.scene.by_tool
+
+        if bytool.shape=="Loop":
+            magnets = MagnetSimulator.loop(bytool.num_magnets, True)
+            for i in range(len(magnets)):
+                bpy.ops.mesh.primitive_uv_sphere_add(radius=context.scene.by_tool.num_magnets, enter_editmode=False, location=(magnets[i].position[0], magnets[i].position[1], magnets[i].position[2]))
+            bpy.ops.view3d.snap_cursor_to_center()
+
+        
+        bpy.ops.mesh.primitive_uv_sphere_add(radius=Magnet.radius, enter_editmode=False, location=(1.49944, 0.813217, 3.65082))
         return {'FINISHED'}
 
 def execute_operator(self, context):
@@ -30,15 +41,16 @@ def execute_operator(self, context):
 
 class BGProperties(bpy.types.PropertyGroup):
     mode_options = [
-        ("mesh.primitive_plane_add", "Loop", '', 'MESH_CIRCLE', 0),
-        ("mesh.primitive_cube_add", "Saddle", '', 'MESH_SQUARE', 1),
-        ("mesh.primitive_circle_add", "Line", '', 'MESH_LINE', 2)
+        ("Loop", "Loop", '', 'MESH_CIRCLE', 0),
+        ("Saddle", "Saddle", '', '', 1),
+        ("Line", "Line", '', '', 2),
+        ("Antitesselated Hypersphere", "Antitesselated Hypersphere", '', '', 3)
     ]
 
     shape = bpy.props.EnumProperty(
         items=mode_options,
         description="Shape of Magnet Construction",
-        default="mesh.primitive_plane_add",
+        default="Loop",
         update=execute_operator
     )
 
@@ -79,8 +91,6 @@ class Magnets_PT_Panel(bpy.types.Panel):
         layout.separator()
         row = layout.row()
         props = row.operator('view3d.cursor_center', text='Create Magnets')
-
-
 
 classes = (BGProperties, Magnets_PT_Panel, Test_OT_Operator)
 

@@ -1,14 +1,7 @@
-from matplotlib.widgets import Slider, Button, RadioButtons
 import numpy as np
-import matplotlib.pyplot as plt
-from Magnet import Magnet
+from . Magnet import Magnet
 import math
 import itertools
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-from itertools import product, combinations
-from matplotlib.patches import FancyArrowPatch
-from mpl_toolkits.mplot3d import proj3d
 
 def partialX(m0, m1):
     r = m0.position - m1.position
@@ -55,18 +48,6 @@ def partial2Y(mag1, mag2):
 
 def partial2Z(mag1, mag2):
     return 5
-
-class Arrow3D(FancyArrowPatch):
-
-    def __init__(self, xs, ys, zs, *args, **kwargs):
-        FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
-        self._verts3d = xs, ys, zs
-
-    def draw(self, renderer):
-        xs3d, ys3d, zs3d = self._verts3d
-        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, renderer.M)
-        self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
-        FancyArrowPatch.draw(self, renderer)
 
 class MagnetSimulator:
 
@@ -120,51 +101,6 @@ class MagnetSimulator:
                 #             return true
         return False
 
-    def draw(self, partials):
-
-        fig = plt.figure()
-        ax = fig.gca(projection='3d')
-        # ax.set_aspect("equal")
-
-         # draw sphere
-        for i in range(len(magnets)):
-            u, v = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
-            x = np.cos(u)*np.sin(v)*self.magnets[i].radius + self.magnets[i].position[0]
-            y = np.sin(u)*np.sin(v)*self.magnets[i].radius + self.magnets[i].position[1]
-            z = np.cos(v)*self.magnets[i].radius + self.magnets[i].position[2]
-            ax.plot_wireframe(x, y, z, color=self.magnets[i].color)
-
-            # draw a vector
-            partials[i] = (partials[i] / (partials[i]**2).sum()**0.5)/50
-            gx = partials[i][0]
-            gy = partials[i][1]
-            gz = partials[i][2]
-
-            px = self.magnets[i].position[0]
-            py = self.magnets[i].position[1]
-            pz = self.magnets[i].position[2]
-
-            a = Arrow3D([px, px+gx], [py, py+gy], [pz, pz+gz], mutation_scale=20, lw=4, arrowstyle="-|>", color="k")
-            ax.add_artist(a)
-            print("Displaying a Gradient Vector")
-
-            # draw a vector
-            moment = (self.magnets[i].moment / (self.magnets[i].moment**2).sum()**0.5)/50
-            gx = moment[0]
-            gy = moment[1]
-            gz = moment[2]
-            a = Arrow3D([px, px+gx], [py, py+gy], [pz, pz+gz], mutation_scale=20, lw=2, arrowstyle="-|>", color=self.magnets[i].color)
-            ax.add_artist(a)
-
-            # if np.linalg.norm(partialRot) < self.threshold:
-            #     print("Unstable magnet")
-        # draw cube
-        r = [-0.025, 0.025]
-        for s, e in combinations(np.array(list(product(r, r, r))), 2):
-            if np.sum(np.abs(s-e)) == r[1]-r[0]:
-                ax.plot3D(*zip(s, e), color="k")
-        plt.show()
-
     def run(self):
         # energy = self.getPotentialEnergy(self.magnets)
         partials = []
@@ -187,50 +123,53 @@ class MagnetSimulator:
                 mag1.color = 'r'
                 print("Unstable magnet")
 
-        self.draw(partials)
+        # self.draw(partials)
+        return partials
 
-colors = ['g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b']
-def line(num, ldir, momentDir):
-    ret = []
-    for i in range(num):
-       
-        ret.append(Magnet(np.array([1 if 'x' in momentDir else 0,  1 if 'y' in momentDir else 0,  1 if 'z' in momentDir else 0]), Magnet.radius, np.array([Magnet.radius*2*i if 'x' in ldir else 0, Magnet.radius*2*i if 'y' in ldir else 0, Magnet.radius*2*i if 'z' in ldir else 0]), colors[i]))
+    def line(num, ldir, momentDir):
+        colors = ['g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b']
+        ret = []
+        for i in range(num):
+        
+            ret.append(Magnet(np.array([1 if 'x' in momentDir else 0,  1 if 'y' in momentDir else 0,  1 if 'z' in momentDir else 0]), Magnet.radius, np.array([Magnet.radius*2*i if 'x' in ldir else 0, Magnet.radius*2*i if 'y' in ldir else 0, Magnet.radius*2*i if 'z' in ldir else 0]), colors[i]))
 
-    return ret
+        return ret
 
-def grid(x, y, z, momentDir):
-    ret = []
-    for i in range(x):
-        for j in range(y):
-            for k in range(z):
-                ret.append(Magnet(np.array([1 if 'x' in momentDir else 0,  1 if 'y' in momentDir else 0,  1 if 'z' in momentDir else 0]), Magnet.radius, np.array([Magnet.radius*2*i, Magnet.radius*2*j, Magnet.radius*2*k]), colors[i]))
+    def grid(x, y, z, momentDir):
+        colors = ['g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b']
+        ret = []
+        for i in range(x):
+            for j in range(y):
+                for k in range(z):
+                    ret.append(Magnet(np.array([1 if 'x' in momentDir else 0,  1 if 'y' in momentDir else 0,  1 if 'z' in momentDir else 0]), Magnet.radius, np.array([Magnet.radius*2*i, Magnet.radius*2*j, Magnet.radius*2*k]), colors[i]))
 
-    return ret
+        return ret
 
 
-def loop(num, counterclockwise):
-    loop = []
-    for i in range(num): #OFF BY ONE ERROR HERE
-        theta = (i*2*np.pi)/(num)
-        print(theta)
-        magnetDirection = np.array([-np.sin(theta), np.cos(theta),0])
-        if counterclockwise == False:
-            magnetDirection *= -1
-        # posVecMag = Magnet.radius/(np.cos(theta/2))
-        posVecMag = Magnet.radius/(np.sin(np.pi/num))
-        magnetPosition = np.array([posVecMag*np.cos(theta), posVecMag*np.sin(theta),0])
-        loop.append(Magnet(magnetDirection, Magnet.radius, magnetPosition, colors[i]))
-    return loop
-    
+    def loop(num, counterclockwise):
+        colors = ['g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b', 'g', 'b']
+        loop = []
+        for i in range(num): #OFF BY ONE ERROR HERE
+            theta = (i*2*np.pi)/(num)
+            print(theta)
+            magnetDirection = np.array([-np.sin(theta), np.cos(theta),0])
+            if counterclockwise == False:
+                magnetDirection *= -1
+            # posVecMag = Magnet.radius/(np.cos(theta/2))
+            posVecMag = Magnet.radius/(np.sin(np.pi/num))
+            magnetPosition = np.array([posVecMag*np.cos(theta), posVecMag*np.sin(theta),0])
+            loop.append(Magnet(magnetDirection, Magnet.radius, magnetPosition, colors[i]))
+        return loop
+        
 
-def saddle():
-    saddle = [
-        Magnet(np.array([1, 1, 0]), Magnet.radius, np.array([0, 0, 0]), colors[0]),
-        Magnet(np.array([1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, 0, 0]), colors[1]),
-        Magnet(np.array([-1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, Magnet.radius*2, 0]), colors[2]),
-        Magnet(np.array([-1, 1, 0]), Magnet.radius, np.array([0, Magnet.radius*2, 0]), colors[3])
-    ]
-    return saddle
+    def saddle():
+        saddle = [
+            Magnet(np.array([1, 1, 0]), Magnet.radius, np.array([0, 0, 0]), colors[0]),
+            Magnet(np.array([1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, 0, 0]), colors[1]),
+            Magnet(np.array([-1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, Magnet.radius*2, 0]), colors[2]),
+            Magnet(np.array([-1, 1, 0]), Magnet.radius, np.array([0, Magnet.radius*2, 0]), colors[3])
+        ]
+        return saddle
 
 if __name__ == "__main__":
     
@@ -240,6 +179,6 @@ if __name__ == "__main__":
     # magnets = line(5, ldir='z', momentDir='x')
     # magnets = line(5,'x','y')
     # magnets = saddle()
-    magnets = loop(5, True)
+    magnets = loop(6, True)
     sim = MagnetSimulator(magnets)
     sim.run()
