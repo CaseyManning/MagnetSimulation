@@ -15,7 +15,7 @@ bl_info = {
 }
 
 class Create_OT_Operator(bpy.types.Operator):
-    bl_idname = "view3d.cursor_center"
+    bl_idname = "view3d.create_magnets"
     bl_label = "simple operator"
     bl_description = "Create Magnets"
 
@@ -25,6 +25,8 @@ class Create_OT_Operator(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         bytool = scene.by_tool
+        if bytool.auto_clear:
+            bpy.ops.view3d.clear_magnets('INVOKE_DEFAULT')
         if bytool.Shape=="Loop":
             magnets = MagnetSimulator.loop(bytool.num_magnets, True)
             for i in range(len(magnets)):
@@ -55,7 +57,7 @@ class Clear_OT_Operator(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         bytool = scene.by_tool
-
+        bpy.ops.object.select_all(action='DESELECT')
         for obj in bpy.data.objects:
             if obj.name.startswith("BaseMagnet") and not obj.name == 'BaseMagnet':
                 obj.select_set(True)
@@ -65,7 +67,9 @@ class Clear_OT_Operator(bpy.types.Operator):
 
 
 def execute_operator(self, context):
-    eval('bpy.ops.' + self.primitive + '()')
+    print('AAAAAAAA')
+    if context.scene.by_tool.auto_adjust:
+        bpy.ops.view3d.create_magnets('INVOKE_DEFAULT')
 
 class BGProperties(bpy.types.PropertyGroup):
     mode_options = [
@@ -101,9 +105,14 @@ class BGProperties(bpy.types.PropertyGroup):
     auto_clear = bpy.props.BoolProperty(
         name = "Auto-clear",
         description = "Whether or not to clear the scene before making a new construction",
-        default = False
+        default = True
     )
 
+    auto_adjust = bpy.props.BoolProperty(
+        name = "Auto-adjust",
+        description = "Whether or not to automatically create new magnets on setting change",
+        default = False
+    )
 
     Order = bpy.props.EnumProperty(
         items=[('Parallel', 'Parallel', '', 0), ('Antiparallel', 'Antiparallel', '', 1)],
@@ -124,7 +133,8 @@ class BGProperties(bpy.types.PropertyGroup):
         default = 5,
         min=1,
         max=15,
-        description = "Number of Magnets to create"
+        description = "Number of Magnets to create",
+        update=execute_operator
     )
 
 class Magnets_PT_Panel(bpy.types.Panel):
@@ -142,6 +152,7 @@ class Magnets_PT_Panel(bpy.types.Panel):
         col.prop(bytool, "scale_factor")
         col.prop(bytool, "show_grid")
         col.prop(bytool, "auto_clear")
+        col.prop(bytool, "auto_adjust")
 
         layout.separator()
 
@@ -163,7 +174,7 @@ class Magnets_PT_Panel(bpy.types.Panel):
         # col.prop(context.scene.MagnetGenerator, "primitive")
         layout.separator()
         row = layout.row()
-        props = row.operator('view3d.cursor_center', text='Create Magnets')
+        props = row.operator('view3d.create_magnets', text='Create Magnets')
 
         layout.separator()
 
