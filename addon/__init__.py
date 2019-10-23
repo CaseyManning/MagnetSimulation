@@ -57,7 +57,7 @@ class Clear_OT_Operator(bpy.types.Operator):
         bytool = scene.by_tool
 
         for obj in bpy.data.objects:
-            if object.name.startswith("BaseMagnet") and not object.name == 'BaseMagnet':
+            if obj.name.startswith("BaseMagnet") and not obj.name == 'BaseMagnet':
                 obj.select_set(True)
                 bpy.ops.object.delete() 
 
