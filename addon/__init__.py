@@ -26,7 +26,7 @@ class Magnets_PT_Panel(bpy.types.Panel):
 
         col = layout.column()
         col.prop(bytool, "scale_factor")
-        col.prop(bytool, "show_grid")
+        # col.prop(bytool, "show_grid")
         col.prop(bytool, "auto_clear")
         col.prop(bytool, "auto_adjust")
 
