@@ -75,7 +75,7 @@ class MagnetSimulator:
     rotPartials1 = [partial2X, partial2Y, partial2Z]
 
     threshold = 0.1
-    distThreshold = 100
+    distThreshold = Magnet.radius*2.1
 
     def __init__(self, magnets):
         self.magnets = magnets
@@ -105,6 +105,7 @@ class MagnetSimulator:
         
         print('Average vector of colliding magnets: ' + str(avgVec))
         avgVec = np.true_divide(avgVec, len(magnets))
+        avgVec = avgVec / (avgVec**2).sum()**0.5
         p_hat = partialVector / (partialVector**2).sum()**0.5
         if np.linalg.norm(p_hat - avgVec) < self.threshold:
             return True
@@ -234,11 +235,14 @@ def saddle():
 
 if __name__ == "__main__":
     
-    mag1 = Magnet(np.array([-1, 0, 0]), Magnet.radius, np.array([0, 0, Magnet.radius*2]), 'b')
+    mag1 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([Magnet.radius*3, 0, 0]), 'b')
     mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
     # magnets = line(3, ldir='z', momentDir='x')
     # magnets = line(5,'x','y')
-    magnets = saddle()
+    # magnets = saddle()
+    magnets = loop(7, True)
+    # magnets = [mag1, mag2]
+
     sim = MagnetSimulator(magnets)
     sim.run()
