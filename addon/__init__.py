@@ -2,6 +2,7 @@ import bpy
 from bpy.props import *
 from . StabilitySimulator2 import MagnetSimulator
 from . Magnet import Magnet
+# from . operator import 
 
 bl_info = {
     "name" : "MagnetGenerator",
@@ -29,18 +30,22 @@ class Create_OT_Operator(bpy.types.Operator):
             bpy.ops.view3d.clear_magnets('INVOKE_DEFAULT')
         if bytool.Shape=="Loop":
             magnets = MagnetSimulator.loop(bytool.num_magnets, True)
-            for i in range(len(magnets)):
-                src_obj = bpy.data.objects["BaseMagnet"]
-                new_obj = src_obj.copy()
-                new_obj.data = src_obj.data.copy()
-                new_obj.animation_data_clear()
-                context.collection.objects.link(new_obj)
-                new_obj.location.x = magnets[i].position[0]*bytool.scale_factor
-                new_obj.location.y = magnets[i].position[1]*bytool.scale_factor
-                new_obj.location.z = magnets[i].position[2]*bytool.scale_factor
-                new_obj.scale.x *= bytool.scale_factor
-                new_obj.scale.y *= bytool.scale_factor
-                new_obj.scale.z *= bytool.scale_factor
+        elif bytool.Shape=="Line":
+            magnets = MagnetSimulator.line(bytool.num_magnets, 'x', 'y')
+        else:
+            magnets = []
+        for i in range(len(magnets)):
+            src_obj = bpy.data.objects["BaseMagnet"]
+            new_obj = src_obj.copy()
+            new_obj.data = src_obj.data.copy()
+            new_obj.animation_data_clear()
+            context.collection.objects.link(new_obj)
+            new_obj.location.x = magnets[i].position[0]*bytool.scale_factor
+            new_obj.location.y = magnets[i].position[1]*bytool.scale_factor
+            new_obj.location.z = magnets[i].position[2]*bytool.scale_factor
+            new_obj.scale.x *= bytool.scale_factor
+            new_obj.scale.y *= bytool.scale_factor
+            new_obj.scale.z *= bytool.scale_factor
         else:
             pass
             
@@ -66,19 +71,51 @@ class Clear_OT_Operator(bpy.types.Operator):
         return {'FINISHED'}
 
 
+
+class Clear_Partials_OT_Operator(bpy.types.Operator):
+    bl_idname = "view3d.clear_partials"
+    bl_label = "Clears Partials"
+    bl_description = "Clears Partials"
+
+    def execute(self, context):
+        scene = context.scene
+        bytool = scene.by_tool
+        return {'FINISHED'}
+
+class Calculate_Partials_OT_Operator(bpy.types.Operator):
+    bl_idname = "view3d.calc_partials"
+    bl_label = "Calculates Partials"
+    bl_description = "Calculates Partials"
+
+    def execute(self, context):
+        scene = context.scene
+        bytool = scene.by_tool
+        return {'FINISHED'}
+
+
+
 def execute_operator(self, context):
-    print('AAAAAAAA')
     if context.scene.by_tool.auto_adjust:
         bpy.ops.view3d.create_magnets('INVOKE_DEFAULT')
+
+def toggle_plane(self, context):
+    if context.scene.by_tool.show_grid:
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.data.objects['Plane'].select = True
+        bpy.data.objects['BaseMagnet'].select = True
+        bpy.ops.object.hide_view_set(unselected=False)
+    else:
+        bpy.ops.object.hide_view_clear()
+
 
 class BGProperties(bpy.types.PropertyGroup):
     mode_options = [
         ("Loop", "Loop", '', 'MESH_CIRCLE', 0),
-        ("Saddle", "Saddle", '', '', 1),
-        ("Line", "Line", '', '', 2),
-        ("Grid", "Grid", '', '', 3),
-        ("Cylinder", "Cylinder", '', '', 4),
-        ("Antitesselated Hypersphere", "Antitesselated Hypersphere", '', '', 5)
+        ("Saddle", "Saddle", '', 'PANEL_CLOSE', 1),
+        ("Line", "Line", '', 'REMOVE', 2),
+        ("Grid", "Grid", '', 'MESH_GRID', 3),
+        ("Cylinder", "Cylinder", '', 'MESH_CYLINDER', 4),
+        ("Cantilated Dodecahedron", "Cantilated Dodecahedron", '', 'MESH_ICOSPHERE', 5)
     ]
 
     scale_factor: IntProperty(
@@ -99,7 +136,8 @@ class BGProperties(bpy.types.PropertyGroup):
     show_grid = bpy.props.BoolProperty(
         name = "Show Grid",
         description = "Whether or not to show the grid background",
-        default = True
+        default = True,
+        update=toggle_plane
     )
 
     auto_clear = bpy.props.BoolProperty(
@@ -111,6 +149,12 @@ class BGProperties(bpy.types.PropertyGroup):
     auto_adjust = bpy.props.BoolProperty(
         name = "Auto-adjust",
         description = "Whether or not to automatically create new magnets on setting change",
+        default = False
+    )
+
+    Auto_recalculate_Partials = bpy.props.BoolProperty(
+        name = "Auto-recalculate Partials",
+        description = "Whether or not to automatically update partials on magnets change",
         default = False
     )
 
@@ -176,11 +220,23 @@ class Magnets_PT_Panel(bpy.types.Panel):
         row = layout.row()
         props = row.operator('view3d.create_magnets', text='Create Magnets')
 
-        layout.separator()
-
         props2 = layout.operator('view3d.clear_magnets', text='Clear Magnets')
 
-classes = (BGProperties, Magnets_PT_Panel, Create_OT_Operator, Clear_OT_Operator)
+        layout.separator()
+
+        box = layout.box()
+        box.label(text="Magnet Partials")
+        bcol = box.column()
+
+        bcol.prop(bytool, "Auto_recalculate_Partials")
+
+        layout.separator()
+
+        props3 = bcol.operator('view3d.calc_partials', text='Calculate Partials')
+
+        props4 = bcol.operator('view3d.clear_partials', text='Clear Partials')
+
+classes = (BGProperties, Magnets_PT_Panel, Create_OT_Operator, Clear_OT_Operator, Clear_Partials_OT_Operator, Calculate_Partials_OT_Operator)
 
 # register, unregister = bpy.utils.register_classes_factory(classes)
 
