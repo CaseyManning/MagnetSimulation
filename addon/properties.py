@@ -7,12 +7,15 @@ def execute_operator(self, context):
 
 def toggle_plane(self, context):
     if context.scene.by_tool.show_grid:
-        bpy.ops.object.select_all(action='DESELECT')
+        print("SHOWING PLANE")
         bpy.data.objects['Plane'].select = True
-        bpy.data.objects['BaseMagnet'].select = True
-        bpy.ops.object.hide_view_set(unselected=False)
+        bpy.context.object.hide_set(False)
     else:
-        bpy.ops.object.hide_view_clear()
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.data.objects['BaseMagnet'].select = True
+        bpy.data.objects['Plane'].select = True
+        bpy.ops.object.hide_view_set(unselected=False)
+        print("HIDING PLANE")
 
 
 class BGProperties(bpy.types.PropertyGroup):

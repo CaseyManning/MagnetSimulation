@@ -89,7 +89,7 @@ class MagnetSimulator:
         p_hat = partialVector / (partialVector**2).sum()**0.5
         if np.linalg.norm(p_hat - avgVec) < self.threshold:
             return True
-                
+    
                 # for magnet3 in magnets:
                 #     if (not (magnet3 == magnet or magnet3 == magnet2)) and np.linalg.norm(magnet.position - magnet3.position) < self.distThreshold:
                 #         vec1 = magnet2.position - magnet.position
