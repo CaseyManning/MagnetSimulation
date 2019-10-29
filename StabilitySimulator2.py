@@ -185,7 +185,10 @@ class MagnetSimulator:
     def run(self):
         # energy = self.getPotentialEnergy(self.magnets)
         partials = []
-        rotPartials = {}
+        rotPartials = []
+
+        for i in range(len(magnets)):
+            rotPartials.append(np.array([0.0, 0.0, 0.0]))
 
         for mag1 in magnets:
             partialPos = np.array([0.0, 0.0, 0.0])
@@ -194,8 +197,7 @@ class MagnetSimulator:
                 if not mag1 == mag2:
                     partialPos += np.array([partial(mag1, mag2) for partial in self.posPartials])
 
-                    rotPartials[mag1] = np.array([partial(mag1, mag2) for partial in self.rotPartials1])
-                    rotPartials[mag2] = np.array([partial(mag1, mag2) for partial in self.rotPartials1])
+                    rotPartials[magnets.index(mag1)] += np.array([partial1X(mag1, mag2), partial1Y(mag1, mag2), partial1Z(mag1, mag2)])
                     
             partialPos = -partialPos
             print("Magnet Partial: " + str(partialPos))
@@ -203,6 +205,12 @@ class MagnetSimulator:
             if not self.pointsTowardsMagnet(partialPos, mag1):
                 mag1.color = 'r'
                 print("Unstable magnet")
+        
+        for i in range(len(rotPartials)):
+            if not np.linalg.norm(rotPartials[i]) == 0:
+                print(rotPartials[i])
+                print("Rotationally unstable: " + str(i))
+                magnets[i].color = 'r'
 
         self.draw(partials)
 
@@ -255,10 +263,12 @@ if __name__ == "__main__":
     mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
     # magnets = line(3, ldir='z', momentDir='x')
-    # magnets = line(5,'x','y')
+    magnets = line(2,'x','x')
+    magnets[0].moment = -magnets[0].moment
+    magnets[1].moment = -magnets[1].moment
     # magnets = saddle()
-    magnets = loop(7, True)
-    magnets[4].moment = np.array([-1,-1,0])
+    # magnets = loop(7, True)
+    # magnets[4].moment = np.array([-1,-1,0])
     # magnets = [mag1, mag2]
 
     sim = MagnetSimulator(magnets)
