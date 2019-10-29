@@ -207,7 +207,7 @@ class MagnetSimulator:
                 print("Unstable magnet")
         
         for i in range(len(rotPartials)):
-            if not np.linalg.norm(rotPartials[i]) == 0:
+            if not np.linalg.norm(np.cross(magnets[i].moment, rotPartials[i])) == 0:
                 print(rotPartials[i])
                 print("Rotationally unstable: " + str(i))
                 magnets[i].color = 'r'
@@ -263,11 +263,11 @@ if __name__ == "__main__":
     mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
     # magnets = line(3, ldir='z', momentDir='x')
-    magnets = line(2,'x','x')
-    magnets[0].moment = -magnets[0].moment
-    magnets[1].moment = -magnets[1].moment
+    # magnets = line(2,'x','x')
+    # magnets[0].moment = -magnets[0].moment
+    # magnets[1].moment = -magnets[1].moment
     # magnets = saddle()
-    # magnets = loop(7, True)
+    magnets = loop(7, True)
     # magnets[4].moment = np.array([-1,-1,0])
     # magnets = [mag1, mag2]
 
