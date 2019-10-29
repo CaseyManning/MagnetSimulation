@@ -242,7 +242,7 @@ def loop(num, counterclockwise):
 
 def saddle():
     saddle = [
-        Magnet(np.array([2, 1, 0]), Magnet.radius, np.array([0, 0, 0]), colors[0]),
+        Magnet(np.array([1, 1, 0]), Magnet.radius, np.array([0, 0, 0]), colors[0]),
         Magnet(np.array([1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, 0, 0]), colors[1]),
         Magnet(np.array([-1, -1, 0]), Magnet.radius, np.array([Magnet.radius*2, Magnet.radius*2, 0]), colors[2]),
         Magnet(np.array([-1, 1, 0]), Magnet.radius, np.array([0, Magnet.radius*2, 0]), colors[3])
