@@ -39,14 +39,30 @@ def partialZ(m0, m1):
 
 
 def partial1X(mag1, mag2):
-    return 5
+    r = mag1.position - mag2.position
+    m1 = mag1.moment
+    squares = r[0] * r[0] + r[1] * r[1] + r[2] * r[2]
+    # 1/4pi factored out
+    p1x = -m1[0] * ((3 * r[0] * r[0] - squares) / math.pow(squares, 5/2)) - m1[1] * ((3 * r[0] * r[1]) / math.pow(squares, 5/2)) - m1[2] * ((3 * r[0] * r[2]) / math.pow(squares, 5/2))
+    return (1/(4 * np.pi)) * p1x
 
 def partial1Y(mag1, mag2):
-    return 5
+    r = mag1.position - mag2.position
+    m1 = mag1.moment
+    squares = r[0] * r[0] + r[1] * r[1] + r[2] * r[2]
+    # 1/4pi factored out
+    p1y = -m1[0] * ((3 * r[0] * r[1]) / math.pow(squares, 5/2)) - m1[1] * ((3 * r[1] * r[1] - squares) / math.pow(squares, 5/2)) - m1[2] * ((3 * r[1] * r[2]) / math.pow(squares, 5/2))
+    return (1/(4 * np.pi)) * p1y
 
 def partial1Z(mag1, mag2):
-    return 5
+    r = mag1.position - mag2.position
+    m1 = mag1.moment
+    squares = r[0] * r[0] + r[1] * r[1] + r[2] * r[2]
+    # 1/4pi factored out
+    p1z = -m1[0] * ((3 * r[0] * r[2]) / math.pow(squares, 5/2)) - m1[1] * ((3 * r[1] * r[2]) / math.pow(squares, 5/2)) - m1[2] * ((3 * r[2] * r[2] - squares) / math.pow(squares, 5/2))
+    return (1/(4 * np.pi)) * p1z
 
+#We don't need to implement the m1 partials, because we'll end up doing the above calculations for that m1 anyways.
 def partial2X(mag1, mag2):
     return 5
 
@@ -72,7 +88,7 @@ class MagnetSimulator:
 
     posPartials = [partialX, partialY, partialZ]
     rotPartials1 = [partial1X, partial1Y, partial1Z]
-    rotPartials1 = [partial2X, partial2Y, partial2Z]
+    # rotPartials1 = [partial2X, partial2Y, partial2Z]
 
     threshold = 0.1
     distThreshold = Magnet.radius*2.1
@@ -235,13 +251,14 @@ def saddle():
 
 if __name__ == "__main__":
     
-    mag1 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([Magnet.radius*3, 0, 0]), 'b')
+    mag1 = Magnet(np.array([1, 1, 0]), Magnet.radius, np.array([Magnet.radius*2, 0, 0]), 'b')
     mag2 = Magnet(np.array([1, 0, 0]), Magnet.radius, np.array([0, 0, 0]), 'b')
 
     # magnets = line(3, ldir='z', momentDir='x')
     # magnets = line(5,'x','y')
     # magnets = saddle()
     magnets = loop(7, True)
+    magnets[4].moment = np.array([-1,-1,0])
     # magnets = [mag1, mag2]
 
     sim = MagnetSimulator(magnets)
