@@ -1,11 +1,21 @@
 import bpy
 from . StabilitySimulator2 import MagnetSimulator
 from . Magnet import Magnet
+import math
 
 class Create_OT_Operator(bpy.types.Operator):
     bl_idname = "view3d.create_magnets"
     bl_label = "simple operator"
     bl_description = "Create Magnets"
+
+    def vec2angle(self, vec):
+        x = vec[0]
+        y = vec[1]
+        z = vec[2]
+        ax = math.atan(z/y)
+        ay = math.atan(x/z)
+        az = math.atan(x/y)
+        return ax, ay, az
 
     def execute(self, context):
         scene = context.scene
@@ -30,6 +40,11 @@ class Create_OT_Operator(bpy.types.Operator):
             new_obj.scale.x *= bytool.scale_factor
             new_obj.scale.y *= bytool.scale_factor
             new_obj.scale.z *= bytool.scale_factor
+            rotation = self.vec2angle(magnets[i].moment)
+            print("ROTATION: " + str(rotation))
+            new_obj.rotation_euler.x = 180/3.14 * rotation[0]
+            new_obj.rotation_euler.y = 180/3.14 * rotation[1]
+            new_obj.rotation_euler.z = 90 + 180/3.14 * rotation[2]
         else:
             pass
             

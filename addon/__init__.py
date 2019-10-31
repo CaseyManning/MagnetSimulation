@@ -2,6 +2,7 @@ import bpy
 from . operator import *
 from bpy.props import *
 from . properties import BGProperties
+
 bl_info = {
     "name" : "MagnetGenerator",
     "author" : "MagnetGenerator.py",
