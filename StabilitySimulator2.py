@@ -90,8 +90,8 @@ class MagnetSimulator:
     rotPartials1 = [partial1X, partial1Y, partial1Z]
     # rotPartials1 = [partial2X, partial2Y, partial2Z]
 
-    threshold = 0.1
-    distThreshold = Magnet.radius*2.1
+    threshold = 0.01
+    distThreshold = Magnet.radius*2.01
 
     def __init__(self, magnets):
         self.magnets = magnets
@@ -268,9 +268,9 @@ if __name__ == "__main__":
     # magnets[0].moment = -magnets[0].moment
     # magnets[1].moment = -magnets[1].moment
     # magnets = saddle()
-    # magnets = loop(7, True)
-    # magnets[4].moment = np.array([-1,-1,0])
-    magnets = [mag1, mag2]
+    magnets = loop(7, True)
+    magnets[4].moment = np.array([-1,-1,0])
+    # magnets = [mag1, mag2]
     # magnets = [mag1, mag2]
 
     sim = MagnetSimulator(magnets)
