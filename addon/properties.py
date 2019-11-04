@@ -4,17 +4,15 @@ from bpy.props import *
 def execute_operator(self, context):
     if context.scene.by_tool.auto_adjust:
         bpy.ops.view3d.create_magnets('INVOKE_DEFAULT')
+        if context.scene.by_tool.Auto_recalculate_Partials:
+            bpy.ops.view3d.calc_partials('INVOKE_DEFAULT')
 
 def toggle_plane(self, context):
     if context.scene.by_tool.show_grid:
         print("SHOWING PLANE")
-        bpy.data.objects['Plane'].select = True
-        bpy.context.object.hide_set(False)
+        bpy.data.objects['Plane'].hide_viewport = False
     else:
-        bpy.ops.object.select_all(action='DESELECT')
-        bpy.data.objects['BaseMagnet'].select = True
-        bpy.data.objects['Plane'].select = True
-        bpy.ops.object.hide_view_set(unselected=False)
+        bpy.data.objects['Plane'].hide_viewport = True
         print("HIDING PLANE")
 
 
@@ -33,7 +31,8 @@ class BGProperties(bpy.types.PropertyGroup):
         default = 50,
         min=1,
         max=100,
-        description = "Amount to scale the magnet construction in space."
+        description = "Amount to scale the magnet construction in space.",
+        update=execute_operator
     )
 
     Shape = bpy.props.EnumProperty(

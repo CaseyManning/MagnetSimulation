@@ -63,8 +63,8 @@ class MagnetSimulator:
 
     def getPotentialEnergy(self, magnets):
         totalPotential = 0
-        for mag1 in magnets:
-            for mag2 in magnets:
+        for mag1 in self.magnets:
+            for mag2 in self.magnets:
                 if not mag1 == mag2:
                     moment1 = mag1.moment
                     moment2 = mag2.moment
@@ -75,7 +75,7 @@ class MagnetSimulator:
 
     def pointsTowardsMagnet(self, partialVector, magnet):
         avgVec = np.array([0.0, 0.0, 0.0]) #Center of mass of connected magnets
-        for magnet2 in magnets:
+        for magnet2 in self.magnets:
             if (not magnet == magnet2) and np.linalg.norm(magnet.position - magnet2.position) < self.distThreshold:
                 vec = magnet2.position - magnet.position
                 v_hat = vec / (vec**2).sum()**0.5
@@ -85,7 +85,7 @@ class MagnetSimulator:
                     return True
         
         print('Average vector of colliding magnets: ' + str(avgVec))
-        avgVec = np.true_divide(avgVec, len(magnets))
+        avgVec = np.true_divide(avgVec, len(self.magnets))
         p_hat = partialVector / (partialVector**2).sum()**0.5
         if np.linalg.norm(p_hat - avgVec) < self.threshold:
             return True
@@ -106,10 +106,10 @@ class MagnetSimulator:
         partials = []
         rotPartials = {}
 
-        for mag1 in magnets:
+        for mag1 in self.magnets:
             partialPos = np.array([0.0, 0.0, 0.0])
             partialRot = np.array([0, 0, 0])
-            for mag2 in magnets:
+            for mag2 in self.magnets:
                 if not mag1 == mag2:
                     partialPos += np.array([partial(mag1, mag2) for partial in self.posPartials])
 

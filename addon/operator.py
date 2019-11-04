@@ -3,21 +3,25 @@ from . StabilitySimulator2 import MagnetSimulator
 from . Magnet import Magnet
 import math
 
+magnetsList = []
+
+def vec2angle(vec):
+    x = vec[0]
+    y = vec[1]
+    # z = vec[2]
+    # ax = math.atan(z/y)
+    # ay = math.atan(x/z)
+    az = math.atan(y/x)
+    return 0, 0, az
+
+
 class Create_OT_Operator(bpy.types.Operator):
     bl_idname = "view3d.create_magnets"
     bl_label = "simple operator"
     bl_description = "Create Magnets"
 
-    def vec2angle(self, vec):
-        x = vec[0]
-        y = vec[1]
-        z = vec[2]
-        ax = math.atan(z/y)
-        ay = math.atan(x/z)
-        az = math.atan(y/x)
-        return 0, 0, az
-
     def execute(self, context):
+        global magnetsList
         scene = context.scene
         bytool = scene.by_tool
         if bytool.auto_clear:
@@ -30,6 +34,7 @@ class Create_OT_Operator(bpy.types.Operator):
             magnets = MagnetSimulator.saddle()
         else:
             magnets = []
+        magnetsList = magnets
         for i in range(len(magnets)):
             src_obj = bpy.data.objects["BaseMagnet"]
             new_obj = src_obj.copy()
@@ -42,12 +47,11 @@ class Create_OT_Operator(bpy.types.Operator):
             new_obj.scale.x *= bytool.scale_factor
             new_obj.scale.y *= bytool.scale_factor
             new_obj.scale.z *= bytool.scale_factor
-            rotation = self.vec2angle(magnets[i].moment)
+            rotation = vec2angle(magnets[i].moment)
             print("ROTATION: " + str(rotation))
-            new_obj.rotation_euler.x = rotation[0]
-            new_obj.rotation_euler.y = rotation[1]
-            new_obj.rotation_euler.z = -3.1415/2 + rotation[2]
-            print(-180/3.14 * rotation[2])
+            new_obj.rotation_euler.x = 3.1415/2 + rotation[0]
+            new_obj.rotation_euler.y = 3.1415/2 + rotation[1]
+            new_obj.rotation_euler.z = 3.1415/2 + rotation[2]
         else:
             pass
             
@@ -80,6 +84,13 @@ class Clear_Partials_OT_Operator(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         bytool = scene.by_tool
+
+        bpy.ops.object.select_all(action='DESELECT')
+        for obj in bpy.data.objects:
+            if obj.name.startswith("Arrow1") and not obj.name == 'Arrow1':
+                obj.select_set(True)
+                bpy.ops.object.delete() 
+        
         return {'FINISHED'}
 
 class Calculate_Partials_OT_Operator(bpy.types.Operator):
@@ -88,6 +99,35 @@ class Calculate_Partials_OT_Operator(bpy.types.Operator):
     bl_description = "Calculates Partials"
 
     def execute(self, context):
+        global magnetsList
         scene = context.scene
         bytool = scene.by_tool
+
+        if bytool.auto_clear:
+            bpy.ops.view3d.clear_partials('INVOKE_DEFAULT')
+
+        sim = MagnetSimulator(magnetsList)
+        partials = sim.run()
+        print("Partials: ", partials)
+
+        for i in range(len(partials)):
+            src_obj = bpy.data.objects["Arrow1"]
+            new_obj = src_obj.copy()
+            new_obj.data = src_obj.data.copy()
+            context.collection.objects.link(new_obj)
+            new_obj.animation_data_clear()
+
+            new_obj.location.x = magnetsList[i].position[0]* bytool.scale_factor
+            new_obj.location.y = magnetsList[i].position[1]* bytool.scale_factor
+            new_obj.location.z = magnetsList[i].position[2]* bytool.scale_factor
+
+            print("making an arrow at ", magnetsList[i].position * bytool.scale_factor)
+
+            rotation = vec2angle(partials[i])
+            
+            new_obj.rotation_euler.x = 3.1415/2 + rotation[0]
+            new_obj.rotation_euler.y = 3.1415/2 + rotation[1]
+            new_obj.rotation_euler.z = 3.1415/2 + rotation[2]
+            
+
         return {'FINISHED'}

@@ -41,12 +41,13 @@ class Magnets_PT_Panel(bpy.types.Panel):
 
         layout.separator()
 
-        bcol.prop(bytool, "num_magnets")
+        if bytool.Shape in ["Line", "Loop", "Grid", "Cylinder"]:
+            bcol.prop(bytool, "num_magnets")
 
         if bytool.Shape == "Grid" or bytool.Shape == "Cylinder":
             layout.separator()
             bcol.prop(bytool, "Order")
-        
+
         # col.label(text="Generate objects:")
         # col.prop(context.scene.MagnetGenerator, "primitive")
         layout.separator()
