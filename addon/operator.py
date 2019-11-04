@@ -14,8 +14,8 @@ class Create_OT_Operator(bpy.types.Operator):
         z = vec[2]
         ax = math.atan(z/y)
         ay = math.atan(x/z)
-        az = math.atan(x/y)
-        return ax, ay, az
+        az = math.atan(y/x)
+        return 0, 0, az
 
     def execute(self, context):
         scene = context.scene
@@ -25,7 +25,9 @@ class Create_OT_Operator(bpy.types.Operator):
         if bytool.Shape=="Loop":
             magnets = MagnetSimulator.loop(bytool.num_magnets, True)
         elif bytool.Shape=="Line":
-            magnets = MagnetSimulator.line(bytool.num_magnets, 'x', 'y')
+            magnets = MagnetSimulator.line(bytool.num_magnets, 'x', 'x')
+        elif bytool.Shape == "Saddle":
+            magnets = MagnetSimulator.saddle()
         else:
             magnets = []
         for i in range(len(magnets)):
@@ -42,9 +44,10 @@ class Create_OT_Operator(bpy.types.Operator):
             new_obj.scale.z *= bytool.scale_factor
             rotation = self.vec2angle(magnets[i].moment)
             print("ROTATION: " + str(rotation))
-            new_obj.rotation_euler.x = 180/3.14 * rotation[0]
-            new_obj.rotation_euler.y = 180/3.14 * rotation[1]
-            new_obj.rotation_euler.z = 90 + 180/3.14 * rotation[2]
+            new_obj.rotation_euler.x = rotation[0]
+            new_obj.rotation_euler.y = rotation[1]
+            new_obj.rotation_euler.z = -3.1415/2 + rotation[2]
+            print(-180/3.14 * rotation[2])
         else:
             pass
             
