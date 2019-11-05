@@ -22,7 +22,7 @@ def vec2angle(vec):
     else:
         az = math.atan2(y, x)
     print(np.pi/2 + az)
-    return 0, 0, np.pi/2 + az
+    return 0, 0, az
 
 class Create_OT_Operator(bpy.types.Operator):
     bl_idname = "view3d.create_magnets"
