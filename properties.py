@@ -74,6 +74,20 @@ class BGProperties(bpy.types.PropertyGroup):
         update=execute_operator
     )
 
+    line_direction = bpy.props.EnumProperty(
+        items=[('x', 'x', '', 0), ('y', 'y', '', 1), ('z', 'z', '', 2)],
+        description="",
+        default="x",
+        update=execute_operator
+    )
+
+    moment_direction = bpy.props.EnumProperty(
+        items=[('x', 'x', '', 0), ('y', 'y', '', 1), ('z', 'z', '', 2)],
+        description="",
+        default="x",
+        update=execute_operator
+    )
+
     gen_decimate_collapse: FloatProperty(
         name = "Decimate Collapse",
         description = "Collapse ratio for the Decimation modifier",

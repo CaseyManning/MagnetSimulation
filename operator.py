@@ -9,6 +9,7 @@ magnetsList = []
 def vec2angle(vec):
     x = vec[0]
     y = vec[1]
+    print(x, y)
     # z = vec[2]
     # ax = math.atan(z/y)
     # ay = math.atan(x/z)
@@ -20,6 +21,7 @@ def vec2angle(vec):
             az = np.pi/2
     else:
         az = math.atan2(y, x)
+    print(np.pi/2 + az)
     return 0, 0, np.pi/2 + az
 
 class Create_OT_Operator(bpy.types.Operator):
@@ -36,7 +38,7 @@ class Create_OT_Operator(bpy.types.Operator):
         if bytool.Shape=="Loop":
             magnets = MagnetSimulator.loop(bytool.num_magnets, True)
         elif bytool.Shape=="Line":
-            magnets = MagnetSimulator.line(bytool.num_magnets, 'x', 'x')
+            magnets = MagnetSimulator.line(bytool.num_magnets, bytool.line_direction, bytool.moment_direction)
         elif bytool.Shape == "Saddle":
             magnets = MagnetSimulator.saddle()
         else:
@@ -124,11 +126,13 @@ class Calculate_Partials_OT_Operator(bpy.types.Operator):
             context.collection.objects.link(new_obj)
             new_obj.animation_data_clear()
 
-            new_obj.location.x = magnetsList[i].position[0]* bytool.scale_factor
-            new_obj.location.y = magnetsList[i].position[1]* bytool.scale_factor
-            new_obj.location.z = magnetsList[i].position[2]* bytool.scale_factor
+            new_obj.location.x = magnetsList[i].position[0] * bytool.scale_factor
+            new_obj.location.y = magnetsList[i].position[1] * bytool.scale_factor
+            new_obj.location.z = magnetsList[i].position[2] * bytool.scale_factor
 
             rotation = vec2angle(partials[i])
+
+            print(rotation)
             
             new_obj.rotation_euler.x = rotation[0]
             new_obj.rotation_euler.y = rotation[1]

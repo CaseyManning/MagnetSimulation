@@ -48,6 +48,10 @@ class Magnets_PT_Panel(bpy.types.Panel):
             layout.separator()
             bcol.prop(bytool, "Order")
 
+        if bytool.Shape == "Line":
+            bcol.prop(bytool, "line_direction")
+            bcol.prop(bytool, "moment_direction")
+
         # col.label(text="Generate objects:")
         # col.prop(context.scene.MagnetGenerator, "primitive")
         layout.separator()

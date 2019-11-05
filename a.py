@@ -17,6 +17,5 @@ def vec2angle(vec):
         az = math.atan2(y, x)
     return 0, 0, az
 
-
 if __name__ == "__main__":
-    print(180/3.14159 * np.array(vec2angle([0.11732139, 0, 0])))
+    print(180/3.14159 * np.array(vec2angle([1, 1, 0])))
