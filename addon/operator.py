@@ -2,6 +2,7 @@ import bpy
 from . StabilitySimulator2 import MagnetSimulator
 from . Magnet import Magnet
 import math
+import numpy as np
 
 magnetsList = []
 
@@ -11,9 +12,15 @@ def vec2angle(vec):
     # z = vec[2]
     # ax = math.atan(z/y)
     # ay = math.atan(x/z)
-    az = math.atan(y/x)
-    return 0, 0, az
 
+    if x == 0:
+        if y <= 0:
+            az = -np.pi/2
+        else:
+            az = np.pi/2
+    else:
+        az = math.atan2(y, x)
+    return 0, 0, np.pi/2 + az
 
 class Create_OT_Operator(bpy.types.Operator):
     bl_idname = "view3d.create_magnets"
@@ -48,12 +55,12 @@ class Create_OT_Operator(bpy.types.Operator):
             new_obj.scale.y *= bytool.scale_factor
             new_obj.scale.z *= bytool.scale_factor
             rotation = vec2angle(magnets[i].moment)
-            print("ROTATION: " + str(rotation))
-            new_obj.rotation_euler.x = 3.1415/2 + rotation[0]
-            new_obj.rotation_euler.y = 3.1415/2 + rotation[1]
-            new_obj.rotation_euler.z = 3.1415/2 + rotation[2]
-        else:
-            pass
+            print("VECTOR: ", magnets[i].moment)
+            print("ROTATION: " + str(180/3.1415 * rotation[2]))
+            print()
+            new_obj.rotation_euler.x = rotation[0]
+            new_obj.rotation_euler.y = rotation[1]
+            new_obj.rotation_euler.z = rotation[2]
             
         return {'FINISHED'}
 
@@ -108,7 +115,7 @@ class Calculate_Partials_OT_Operator(bpy.types.Operator):
 
         sim = MagnetSimulator(magnetsList)
         partials = sim.run()
-        print("Partials: ", partials)
+        # print("Partials: ", partials)
 
         for i in range(len(partials)):
             src_obj = bpy.data.objects["Arrow1"]
@@ -121,13 +128,11 @@ class Calculate_Partials_OT_Operator(bpy.types.Operator):
             new_obj.location.y = magnetsList[i].position[1]* bytool.scale_factor
             new_obj.location.z = magnetsList[i].position[2]* bytool.scale_factor
 
-            print("making an arrow at ", magnetsList[i].position * bytool.scale_factor)
-
             rotation = vec2angle(partials[i])
             
-            new_obj.rotation_euler.x = 3.1415/2 + rotation[0]
-            new_obj.rotation_euler.y = 3.1415/2 + rotation[1]
-            new_obj.rotation_euler.z = 3.1415/2 + rotation[2]
+            new_obj.rotation_euler.x = rotation[0]
+            new_obj.rotation_euler.y = rotation[1]
+            new_obj.rotation_euler.z = rotation[2]
             
 
         return {'FINISHED'}
