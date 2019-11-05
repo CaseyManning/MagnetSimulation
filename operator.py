@@ -115,7 +115,7 @@ class Calculate_Partials_OT_Operator(bpy.types.Operator):
 
         sim = MagnetSimulator(magnetsList)
         partials = sim.run()
-        # print("Partials: ", partials)
+        print("Partials: ", partials)
 
         for i in range(len(partials)):
             src_obj = bpy.data.objects["Arrow1"]
