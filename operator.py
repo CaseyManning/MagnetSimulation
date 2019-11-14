@@ -1,5 +1,5 @@
 import bpy
-from . StabilitySimulator2 import MagnetSimulator
+from . MagnetSimulator import MagnetSimulator
 from . Magnet import Magnet
 import math
 import numpy as np
