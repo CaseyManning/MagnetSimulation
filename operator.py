@@ -24,6 +24,24 @@ def vec2angle(vec):
     print(np.pi/2 + az)
     return 0, 0, az
 
+def angle2vec(angle):
+    # x = vec[0]
+    # y = vec[1]
+    # print(x, y)
+    # # z = vec[2]
+    # # ax = math.atan(z/y)
+    # # ay = math.atan(x/z)
+
+    # if x == 0:
+    #     if y <= 0:
+    #         az = -np.pi/2
+    #     else:
+    #         az = np.pi/2
+    # else:
+    #     az = math.atan2(y, x)
+    # print(np.pi/2 + az)
+    return 0, 0, 0
+
 class Create_OT_Operator(bpy.types.Operator):
     bl_idname = "view3d.create_magnets"
     bl_label = "simple operator"
@@ -84,6 +102,30 @@ class Clear_OT_Operator(bpy.types.Operator):
                 bpy.ops.object.delete() 
 
         return {'FINISHED'}
+
+class Update_Magnets_OT_Operator(bpy.types.Operator):
+    bl_idname = "view3d.update_magnets"
+    bl_label = "Update Magnets"
+    bl_description = "Updates Magnets"
+
+    # def invoke(self, context, event):
+    #     return context.window_manager.invoke_props_dialog(self)
+
+    def execute(self, context):
+        scene = context.scene
+        bytool = scene.by_tool
+
+        magnetsList = []
+
+        for obj in bpy.data.objects:
+            if obj.name.startswith("Arrow1") and not obj.name == 'Arrow1':
+                x = obj.location.x/bytool.scale_factor
+                y = obj.location.y/bytool.scale_factor
+                z = obj.location.z/bytool.scale_factor
+                magnetsList.append(Magnet(angle2vec(obj.rotation_euler), Magnet.radius, (x, y, z), 'b'))
+
+        return {'FINISHED'}
+
 
 class Clear_Partials_OT_Operator(bpy.types.Operator):
     bl_idname = "view3d.clear_partials"

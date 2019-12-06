@@ -74,7 +74,11 @@ class Magnets_PT_Panel(bpy.types.Panel):
 
         props4 = bcol.operator('view3d.clear_partials', text='Clear Partials')
 
-classes = (BGProperties, Magnets_PT_Panel, Create_OT_Operator, Clear_OT_Operator, Clear_Partials_OT_Operator, Calculate_Partials_OT_Operator)
+        layout.separator()
+
+        updateProp = row.operator('view3d.update_magnets', text='Update Magnet List')
+
+classes = (BGProperties, Magnets_PT_Panel, Create_OT_Operator, Clear_OT_Operator, Clear_Partials_OT_Operator, Calculate_Partials_OT_Operator, Update_Magnets_OT_Operator)
 
 # register, unregister = bpy.utils.register_classes_factory(classes)
 
