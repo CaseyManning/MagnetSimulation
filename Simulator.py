@@ -16,6 +16,7 @@ else:
 import numpy as np
 import math
 import itertools
+import traceback
 from itertools import product, combinations
 
 def partialX(m0, m1):
@@ -143,7 +144,7 @@ class MagnetSimulator:
 
         for i in range(len(contactPoints)):
             eq = [0 for z in range(numVariables)]
-            if contactPoints.forceOn(magnet) == 0:
+            if np.linalg.norm(contactPoints[i].forceOn(magnet)) == 0:
                 eq[i] = k
                 eq[i+int(numVariables/2)] = -1
                 equations.append(eq)
@@ -151,18 +152,18 @@ class MagnetSimulator:
             else:
                 eq[i] = k
                 equations.append(eq)
-                values.append(contactPoints.forceOn(magnet))
+                values.append(np.linalg.norm(contactPoints[i].forceOn(magnet)))
 
 
 
         eq2 = []
         val = m
         for i in range(len(contactPoints)):
-            if contactPoints.forceOn(magnet) == 0:
+            if np.linalg.norm(contactPoints[i].forceOn(magnet)) == 0:
                 eq2.append(math.cos(angles[i]))
             else:
                 eq2.append(0)
-                val -= math.cos(angles[i]) * contactPoints.forceOn(magnet)
+                val -= math.cos(angles[i]) * np.linalg.norm(contactPoints[i].forceOn(magnet))
 
         for i in range(len(contactPoints)):
             eq2.append(0)
@@ -190,6 +191,7 @@ class MagnetSimulator:
         def __init__(self, position, magnets):
                self.position = position
                self.magnets = magnets
+               self.normalForces = {magnets[0] : np.array([0, 0, 0]), magnets[1] : np.array([0, 0, 0])}
 
         def forceOn(self, magnet):
             return self.normalForces[magnet]
@@ -208,7 +210,6 @@ class MagnetSimulator:
         contactPoints = []
 
         try:
-
             for i in range(len(self.magnets)):
                 for j in range(len(self.magnets)):
                     m1 = self.magnets[i]
@@ -225,19 +226,21 @@ class MagnetSimulator:
                     if magnet in c.magnets:
                         cps.append(c)
                 normalForces = self.calculateNormals(magnet, partials[i], cps)
-                for i in range(contactPoints):
-                    vec = contactPoints[i].position - magnet.position
+                for i in range(len(cps)):
+                    vec = cps[i].position - magnet.position
                     vec /= np.linalg.norm(vec)
                     vec *= normalForces[i]
 
-                    contactPoints[i].forceIs(self.magnets[i], vec)
+                    cps[i].forceIs(self.magnets[i], vec)
 
         except:
+            print("EXCEPTION")
+            traceback.print_exc()
             return False, contactPoints
 
         return True, contactPoints
 
-    def draw(self, partials):
+    def draw(self, partials, contactPoints):
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
@@ -272,6 +275,12 @@ class MagnetSimulator:
             gz = moment[2]
             a = Arrow3D([px, px+gx], [py, py+gy], [pz, pz+gz], mutation_scale=20, lw=2, arrowstyle="-|>", color=self.magnets[i].color)
             ax.add_artist(a)
+
+            for point in contactPoints:
+                pos = point.position
+                for mag in point.magnets:
+                    a = Arrow3D([pos[0], pos[0] + point.forceOn(mag)[0]], [pos[1], pos[1] + point.forceOn(mag)[1]], [pos[2], pos[2] + point.forceOn(mag)[2]], mutation_scale=20, lw=2, arrowstyle="-|>", color=self.magnets[i].color)
+                    ax.add_artist(a)
 
             # if np.linalg.norm(partialRot) < self.threshold:
             #     print("Unstable magnet")
@@ -325,7 +334,7 @@ class MagnetSimulator:
         #         self.magnets[i].color = 'r'
 
         if MATPLOT:
-            self.draw(partials)
+            self.draw(partials, contactPoints)
             return partials
         else:
             return partials
