@@ -30,3 +30,9 @@ class Magnet:
         self.position = position
         self.moment = self.getMomentRemanence()#self.getMoment(self.magnetization)
         self.color = color
+
+    def __eq__(self, other):
+        return self.position[0] == other.position[0] and self.position[1] == other.position[1] and self.position[2] == other.position[2]
+
+    def __hash__(self):
+        return hash(str(self.position[0]) + "aaa" + str(self.position[1]) + str(self.position[2]))

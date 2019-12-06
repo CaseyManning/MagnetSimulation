@@ -199,8 +199,6 @@ class MagnetSimulator:
         def forceIs(self, magnet, force):
             self.normalForces = {magnet : force, [mag for mag in self.magnets if not mag == magnet][0] : -force}
 
-    #Go through each magnet, calculate normal forces, then just check that the normal forces for each contact point add up to zero
-
     #Start at one magnet, get using the gradient as a spring force displacement vector, calculate the forces for each contact point.
     # Then, for each of those normal forces, solve the same system of equations for the next magnet over with the added opposite force
     # from the contact point. If there is ever an unsolvable system, the configuration is unstable.
@@ -209,14 +207,24 @@ class MagnetSimulator:
 
         contactPoints = []
 
+        print(len(self.magnets))
+
+        [print(mag.position) for mag in magnets]
+
+        print("THRESHOLD:" + str(self.distThreshold))
+
         try:
             for i in range(len(self.magnets)):
-                for j in range(len(self.magnets)):
+                for j in range(i, len(self.magnets), 1):
                     m1 = self.magnets[i]
                     m2 = self.magnets[j]
+                    print(np.linalg.norm(m1.position - m2.position))
                     if (not m1 == m2) and np.linalg.norm(m1.position - m2.position) < self.distThreshold:
                         cp = self.ContactPoint((m1.position + m2.position)/2, [m1, m2])
                         contactPoints.append(cp)
+                        # print(cp.magnets)
+
+            print("CREATED " + str(len(contactPoints)) + " CONTACT POINTS")
 
             for i in range(len(self.magnets)):
                 magnet = self.magnets[i]
@@ -224,6 +232,7 @@ class MagnetSimulator:
                 cps = []
                 for c in contactPoints:
                     if magnet in c.magnets:
+                        print("Found a contact point for " + str(i))
                         cps.append(c)
                 normalForces = self.calculateNormals(magnet, partials[i], cps)
                 for i in range(len(cps)):
