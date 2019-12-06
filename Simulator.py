@@ -143,21 +143,32 @@ class MagnetSimulator:
 
         for i in range(len(contactPoints)):
             eq = [0 for z in range(numVariables)]
-            eq[i] = k
-            eq[i+int(numVariables/2)] = -1
+            if contactPoints.forceOn(magnet) == 0:
+                eq[i] = k
+                eq[i+int(numVariables/2)] = -1
+                equations.append(eq)
+                values.append(0)
+            else:
+                eq[i] = k
+                equations.append(eq)
+                values.append(contactPoints.forceOn(magnet))
 
-            equations.append(eq)
-            values.append(0)
+
 
         eq2 = []
-        for i in range(len(contactPoints)):       #TODO: Change it so we replace the variables for the normal forces from past magnets with the known normal force
-            eq2.append(math.cos(angles[i]))
+        val = m
+        for i in range(len(contactPoints)):
+            if contactPoints.forceOn(magnet) == 0:
+                eq2.append(math.cos(angles[i]))
+            else:
+                eq2.append(0)
+                val -= math.cos(angles[i]) * contactPoints.forceOn(magnet)
 
         for i in range(len(contactPoints)):
             eq2.append(0)
         
         equations.append(eq2)
-        values.append(m)
+        values.append(val)
 
         for i in range(len(contactPoints) - 1):
             eq3 = [0 for z in range(numVariables)]
@@ -222,8 +233,6 @@ class MagnetSimulator:
                     contactPoints[i].forceIs(self.magnets[i], vec)
 
         except:
-            for i in range(len(normalForces)):
-                vec = contactPoints[i].position
             return False, contactPoints
 
         return True, contactPoints
