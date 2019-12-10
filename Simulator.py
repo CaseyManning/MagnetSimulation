@@ -208,10 +208,6 @@ class MagnetSimulator:
 
         contactPoints = []
 
-        print(len(self.magnets))
-
-        [print(mag.position) for mag in magnets]
-
         print("THRESHOLD:" + str(self.distThreshold))
 
         try:
@@ -288,13 +284,8 @@ class MagnetSimulator:
 
 
             for point in contactPoints:
-                print("——————————————————")
-                print(point.forceOn(point.magnets[0] ))
-                print(point.forceOn(point.magnets[1] ))
-                print("——————————————————")
                 pos = point.position
                 for mag in point.magnets:
-                    print(point.magnets)
                     a = Arrow3D([pos[0], pos[0] + point.forceOn(mag)[0]], [pos[1], pos[1] + point.forceOn(mag)[1]], [pos[2], pos[2] + point.forceOn(mag)[2]], mutation_scale=20, lw=2, arrowstyle="-|>", color=self.magnets[i].color)
                     ax.add_artist(a)
 
