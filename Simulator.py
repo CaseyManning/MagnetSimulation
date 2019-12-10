@@ -122,12 +122,14 @@ class MagnetSimulator:
         k = 1 #spring constant
         m = np.linalg.norm(force) #magnitude of magnetic force
 
-        numVariables = len(contactPoints) * 2
+        numContacts = len(contactPoints)
 
         angles = []
         for i in range(len(contactPoints)):
             vec = contactPoints[i].position - magnet.position
             angles.append(angle(vec, force))
+
+        print("ANGLES:", angles)
 
         if(len(contactPoints) <= 2):
 
@@ -146,7 +148,7 @@ class MagnetSimulator:
             equations.append(eq2)
             values.append(val)
             
-            eq4 = [0 for z in range(int(numVariables/2))]
+            eq4 = [0 for z in range(int(numContacts))]
             for i in range(len(contactPoints)):
                 eq4[i] = math.sin(angles[i])
 
@@ -159,10 +161,10 @@ class MagnetSimulator:
             values = []
             '''For each contact point, add the equation kd = n'''
             for i in range(len(contactPoints)):
-                eq = [0 for z in range(numVariables)]
+                eq = [0 for z in range(numContacts*2)]
                 if np.linalg.norm(contactPoints[i].forceOn(magnet)) == 0:
                     eq[i] = k
-                    eq[i+int(numVariables/2)] = -1
+                    eq[i+int(numContacts)] = -1
                     equations.append(eq)
                     values.append(0)
                 else:
@@ -187,14 +189,14 @@ class MagnetSimulator:
             values.append(val)
             '''Add the equation d1 cos(theta1) = d2 cos(theta2) = d3 cos(theta3) ...'''
             for i in range(len(contactPoints) - 1):
-                eq3 = [0 for z in range(numVariables)]
-                eq3[i + int(numVariables/2)] = math.cos(angles[i])
-                eq3[(i+1) + int(numVariables/2)] = - math.cos(angles[i+1])                
+                eq3 = [0 for z in range(numContacts*2)]
+                eq3[i + numContacts] = math.cos(angles[i])
+                eq3[(i+1) + numContacts] = - math.cos(angles[i+1])                
                 equations.append(eq3)
                 values.append(0)
 
             '''Add that one equations with the sin()s'''
-            eq4 = [0 for z in range(int(numVariables))]
+            eq4 = [0 for z in range(int(numContacts*2))]
             for i in range(len(contactPoints)):
                 eq4[i] = math.sin(angles[i])
 
