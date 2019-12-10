@@ -192,7 +192,7 @@ class MagnetSimulator:
             self.normalForces = [np.array([0, 0, 0]), np.array([0, 0, 0])]
 
         def forceOn(self, magnet):
-            return self.normalForces[magnets.index(magnet)]
+            return self.normalForces[self.magnets.index(magnet)]
 
         def forceIs(self, magnet, force):
             if magnets.index(magnet) == 0:
