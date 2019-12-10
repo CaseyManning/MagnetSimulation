@@ -71,16 +71,6 @@ def partial1Z(mag1, mag2):
     p1z = -m1[0] * ((3 * r[0] * r[2]) / math.pow(squares, 5/2)) - m1[1] * ((3 * r[1] * r[2]) / math.pow(squares, 5/2)) - m1[2] * ((3 * r[2] * r[2] - squares) / math.pow(squares, 5/2))
     return (1/(4 * np.pi)) * p1z
 
-#We don't need to implement the m1 partials, because we'll end up doing the above calculations for that m1 anyways.
-def partial2X(mag1, mag2):
-    return 5
-
-def partial2Y(mag1, mag2):
-    return 5
-
-def partial2Z(mag1, mag2):
-    return 5
-
 def dotproduct(v1, v2):
   return sum((a*b) for a, b in zip(v1, v2))
 
@@ -130,7 +120,7 @@ class MagnetSimulator:
     def calculateNormals(self, magnet, force, contactPoints):
 
         k = 1 #spring constant
-        m = 2 #magnitude of magnetic force
+        m = np.linalg.norm(force) #magnitude of magnetic force
 
         numVariables = len(contactPoints) * 2
 
@@ -139,48 +129,77 @@ class MagnetSimulator:
             vec = contactPoints[i].position - magnet.position
             angles.append(angle(vec, force))
 
-        equations = []  # [n1, n2, n3, ..., d1, d2, d3, ... ]
-        values = []
+        if(len(contactPoints) <= 2):
 
+            equations = []  # [n1, n2, n3, ...]
+            values = []
 
-        '''For each contact point, add the equation kd = n'''
-        for i in range(len(contactPoints)):
-            eq = [0 for z in range(numVariables)]
-            if np.linalg.norm(contactPoints[i].forceOn(magnet)) == 0:
-                eq[i] = k
-                eq[i+int(numVariables/2)] = -1
-                equations.append(eq)
-                values.append(0)
-            else:
-                eq[i] = k
-                equations.append(eq)
-                values.append(np.linalg.norm(contactPoints[i].forceOn(magnet)))
+            eq2 = []
+            val = m
+            '''Add the equation n1 cos(theta1) + n2 cos(theta2) + n3 cos(theta3) ... - m = 0'''
+            for i in range(len(contactPoints)):
+                if np.linalg.norm(contactPoints[i].forceOn(magnet)) == 0:
+                    eq2.append(math.cos(angles[i]))
+                else:
+                    eq2.append(0)
+                    val -= math.cos(angles[i]) * np.linalg.norm(contactPoints[i].forceOn(magnet))
+            equations.append(eq2)
+            values.append(val)
+            
+            eq4 = [0 for z in range(int(numVariables/2))]
+            for i in range(len(contactPoints)):
+                eq4[i] = math.sin(angles[i])
 
-        eq2 = []
-        val = m
-        '''Add the equation n1 cos(theta1) + n2 cos(theta2) + n3 cos(theta3) ... - m = 0'''
-        for i in range(len(contactPoints)):
-            if np.linalg.norm(contactPoints[i].forceOn(magnet)) == 0:
-                eq2.append(math.cos(angles[i]))
-            else:
-                eq2.append(0)
-                val -= math.cos(angles[i]) * np.linalg.norm(contactPoints[i].forceOn(magnet))
-
-        for i in range(len(contactPoints)):
-            eq2.append(0)
-        
-        equations.append(eq2)
-        values.append(val)
-        '''Add the equation d1 cos(theta1) = d2 cos(theta2) = d3 cos(theta3) ... '''
-        for i in range(len(contactPoints) - 1):
-            eq3 = [0 for z in range(numVariables)]
-            eq3[i + int(numVariables/2)] = math.cos(angles[i])
-            eq3[(i+1) + int(numVariables/2)] = - math.cos(angles[i+1])                
-            equations.append(eq3)
+            equations.append(eq4)
             values.append(0)
 
+        else:
 
-        '''Are we missing the other equation (n1 sin(theta1)) + n2 sin(theta2) + ... = 0?'''
+            equations = []  # [n1, n2, n3, ..., d1, d2, d3, ... ]
+            values = []
+            '''For each contact point, add the equation kd = n'''
+            for i in range(len(contactPoints)):
+                eq = [0 for z in range(numVariables)]
+                if np.linalg.norm(contactPoints[i].forceOn(magnet)) == 0:
+                    eq[i] = k
+                    eq[i+int(numVariables/2)] = -1
+                    equations.append(eq)
+                    values.append(0)
+                else:
+                    eq[i] = k
+                    equations.append(eq)
+                    values.append(np.linalg.norm(contactPoints[i].forceOn(magnet)))
+
+            eq2 = []
+            val = m
+            '''Add the equation n1 cos(theta1) + n2 cos(theta2) + n3 cos(theta3) ... - m = 0'''
+            for i in range(len(contactPoints)):
+                if np.linalg.norm(contactPoints[i].forceOn(magnet)) == 0:
+                    eq2.append(math.cos(angles[i]))
+                else:
+                    eq2.append(0)
+                    val -= math.cos(angles[i]) * np.linalg.norm(contactPoints[i].forceOn(magnet))
+
+            for i in range(len(contactPoints)):
+                eq2.append(0)
+            
+            equations.append(eq2)
+            values.append(val)
+            '''Add the equation d1 cos(theta1) = d2 cos(theta2) = d3 cos(theta3) ...'''
+            for i in range(len(contactPoints) - 1):
+                eq3 = [0 for z in range(numVariables)]
+                eq3[i + int(numVariables/2)] = math.cos(angles[i])
+                eq3[(i+1) + int(numVariables/2)] = - math.cos(angles[i+1])                
+                equations.append(eq3)
+                values.append(0)
+
+            '''Add that one equations with the sin()s'''
+            eq4 = [0 for z in range(int(numVariables))]
+            for i in range(len(contactPoints)):
+                eq4[i] = math.sin(angles[i])
+
+            equations.append(eq4)
+            values.append(0)
             
         print("Equations", equations)
         print("Values", values)
@@ -311,7 +330,6 @@ class MagnetSimulator:
             rotPartials.append(np.array([0.0, 0.0, 0.0]))
 
         for mag1 in self.magnets:
-            normalForces.append(0)
             partialPos = np.array([0.0, 0.0, 0.0])
             partialRot = np.array([0, 0, 0])
             for mag2 in self.magnets:
@@ -319,10 +337,6 @@ class MagnetSimulator:
                     partialPos += np.array([partial(mag1, mag2) for partial in self.posPartials])
 
                     rotPartials[self.magnets.index(mag1)] += np.array([partial1X(mag1, mag2), partial1Y(mag1, mag2), partial1Z(mag1, mag2)])
-
-                vec = mag2.position - mag1.position
-                if np.linalg.norm(vec) < Magnet.radius*2.01:
-                    normalForces.append((vec) / np.linalg.norm(vec))
 
             partialPos = -partialPos
             partials.append(partialPos)
