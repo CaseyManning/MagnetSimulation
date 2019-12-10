@@ -187,16 +187,18 @@ class MagnetSimulator:
     class ContactPoint:
 
         def __init__(self, position, magnets):
-               self.position = position
-               self.magnets = magnets
-               self.normalForces = {magnets[0] : np.array([0, 0, 0]), magnets[1] : np.array([0, 0, 0])}
+            self.position = position
+            self.magnets = magnets
+            self.normalForces = [np.array([0, 0, 0]), np.array([0, 0, 0])]
 
         def forceOn(self, magnet):
-            return self.normalForces[magnet]
+            return self.normalForces[magnets.index(magnet)]
 
         def forceIs(self, magnet, force):
-            print("SETTING FORCE ON: ", [mag for mag in self.magnets if not mag == magnet][0])
-            self.normalForces = {magnet : force, [mag for mag in self.magnets if not mag == magnet][0] : -force}
+            if magnets.index(magnet) == 0:
+                self.normalForces = [force, -force]
+            else:
+                self.normalForces = [-force, force]
 
     #Start at one magnet, get using the gradient as a spring force displacement vector, calculate the forces for each contact point.
     # Then, for each of those normal forces, solve the same system of equations for the next magnet over with the added opposite force
