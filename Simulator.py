@@ -142,6 +142,8 @@ class MagnetSimulator:
         equations = []  # [n1, n2, n3, ..., d1, d2, d3, ... ]
         values = []
 
+
+        '''For each contact point, add the equation kd = n'''
         for i in range(len(contactPoints)):
             eq = [0 for z in range(numVariables)]
             if np.linalg.norm(contactPoints[i].forceOn(magnet)) == 0:
@@ -156,6 +158,7 @@ class MagnetSimulator:
 
         eq2 = []
         val = m
+        '''Add the equation n1 cos(theta1) + n2 cos(theta2) + n3 cos(theta3) ... - m = 0'''
         for i in range(len(contactPoints)):
             if np.linalg.norm(contactPoints[i].forceOn(magnet)) == 0:
                 eq2.append(math.cos(angles[i]))
@@ -168,19 +171,22 @@ class MagnetSimulator:
         
         equations.append(eq2)
         values.append(val)
-
+        '''Add the equation d1 cos(theta1) = d2 cos(theta2) = d3 cos(theta3) ... '''
         for i in range(len(contactPoints) - 1):
             eq3 = [0 for z in range(numVariables)]
             eq3[i + int(numVariables/2)] = math.cos(angles[i])
             eq3[(i+1) + int(numVariables/2)] = - math.cos(angles[i+1])                
             equations.append(eq3)
             values.append(0)
+
+
+        '''Are we missing the other equation (n1 sin(theta1)) + n2 sin(theta2) + ... = 0?'''
             
-        print(equations)
-        print(values)
-        print(np.array(equations).shape)
-        print(np.array(values).shape)
+        print("Equations", equations)
+        print("Values", values)
         solution = np.linalg.solve(equations, values)
+        print("Solutions", solution)
+        print()
         return solution
 
 
@@ -215,13 +221,10 @@ class MagnetSimulator:
                 for j in range(i, len(self.magnets), 1):
                     m1 = self.magnets[i]
                     m2 = self.magnets[j]
-                    print(np.linalg.norm(m1.position - m2.position))
                     if (not m1 == m2) and np.linalg.norm(m1.position - m2.position) < self.distThreshold:
                         cp = self.ContactPoint((m1.position + m2.position)/2, [m1, m2])
                         contactPoints.append(cp)
                         # print(cp.magnets)
-
-            print("CREATED " + str(len(contactPoints)) + " CONTACT POINTS")
 
             for i in range(len(self.magnets)):
                 magnet = self.magnets[i]
@@ -229,7 +232,6 @@ class MagnetSimulator:
                 cps = []
                 for c in contactPoints:
                     if magnet in c.magnets:
-                        print("Found a contact point for " + str(i))
                         cps.append(c)
                 normalForces = self.calculateNormals(magnet, partials[i], cps)
                 for i in range(len(cps)):
@@ -323,7 +325,6 @@ class MagnetSimulator:
                     normalForces.append((vec) / np.linalg.norm(vec))
 
             partialPos = -partialPos
-            print("Magnet Partial: " + str(partialPos))
             partials.append(partialPos)
 
         stability, contactPoints = self.checkStability(partials)
