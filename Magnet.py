@@ -36,3 +36,9 @@ class Magnet:
 
     def __hash__(self):
         return hash(str(self.position[0]) + "aaa" + str(self.position[1]) + str(self.position[2]))
+
+    def __str__(self):
+        return "Magnet(" + str(self.position[0]) + ", " + str(self.position[1]) + ", " + str(self.position[2]) + ")"
+    
+    def __repr__(self):
+        return "Magnet(" + str(self.position[0]) + ", " + str(self.position[1]) + ", " + str(self.position[2]) + ")"
