@@ -78,6 +78,24 @@ def unit_vector(vector):
     """ Returns the unit vector of the vector.  """
     return vector / np.linalg.norm(vector)
 
+def vec2angle(vec):
+    x = vec[0]
+    y = vec[1]
+    print(x, y)
+    # z = vec[2]
+    # ax = math.atan(z/y)
+    # ay = math.atan(x/z)
+
+    if x == 0:
+        if y <= 0:
+            az = -np.pi/2
+        else:
+            az = np.pi/2
+    else:
+        az = math.atan2(y, x)
+    print(np.pi/2 + az)
+    return az
+
 def angle(v1, v2):
     print("——————————————————————————")
     print(v1, v2)
@@ -135,7 +153,8 @@ class MagnetSimulator:
         angles = []
         for i in range(len(contactPoints)):
             vec = contactPoints[i].position - magnet.position
-            angles.append(angle(vec, force))
+            angles.append(vec2angle(vec) - vec2angle(force))
+            # angles.append(angle(vec, force))
 
         print("ANGLES:", angles)
         if(len(contactPoints) == 0):
@@ -329,7 +348,6 @@ class MagnetSimulator:
 
             a = Arrow3D([px, px+gx], [py, py+gy], [pz, pz+gz], mutation_scale=20, lw=4, arrowstyle="-|>", color="k")
             ax.add_artist(a)
-            print("Displaying a Gradient Vector")
 
             # draw a vector
             moment = (self.magnets[i].moment / (self.magnets[i].moment**2).sum()**0.5)/50
@@ -455,10 +473,10 @@ if __name__ == "__main__":
     # magnets[1].moment = -magnets[1].moment
     # magnets = saddle()
 
-    # magnets = MagnetSimulator.loop(5, True)
+    magnets = MagnetSimulator.loop(5, True)
     # magnets[4].position -= np.array([0, 0.001, 0])
 
-    magnets = MagnetSimulator.line(2, 'x', 'x')
+    # magnets = MagnetSimulator.line(2, 'x', 'x')
 
 
     # magnets = [mag1, mag2]
